@@ -351,18 +351,18 @@
 									<article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_28px_60px_rgba(15,23,42,0.16)]">
 										<div class="relative h-48 w-full overflow-hidden">
 											<img src="{{ $train['image'] }}" alt="{{ $train['name'] }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-											@if ($train['badge'])
-												<span class="absolute right-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['badge'] }}</span>
-											@endif
+											<span class="absolute right-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['class'] }}</span>
 										</div>
 										<div class="flex flex-1 items-center justify-between px-4 py-4">
 											<h3 class="text-sm font-semibold text-slate-800">{{ $train['name'] }}</h3>
 											<span class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-full px-3 text-xs font-semibold text-white {{ $train['color'] }}">
-												{{ explode(' ', trim($train['name']))[1] ?? 'Rail' }}
+												{{ $train['code'] }}
 											</span>
 										</div>
 									</article>
-								@endforeach
+								@empty
+									<p class="col-span-full rounded-3xl border border-slate-100 bg-white px-6 py-8 text-sm text-slate-600 shadow-sm">Belum ada data kereta untuk ditampilkan.</p>
+								@endforelse
 							</div>
 						</div>
 					</section>
