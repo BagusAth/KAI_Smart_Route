@@ -12,7 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('train_id')->constrained('trains')->cascadeOnDelete();
             $table->foreignId('station_id')->constrained('stations')->cascadeOnDelete();
+            $table->foreignId('platform_id')->nullable()->constrained('platforms')->nullOnDelete();
             $table->unsignedInteger('stop_order');
+            $table->unsignedSmallInteger('arrival_offset_minutes')->nullable();
+            $table->unsignedSmallInteger('departure_offset_minutes')->nullable();
+            $table->unsignedSmallInteger('stop_duration_minutes')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->unique(['train_id', 'station_id']);

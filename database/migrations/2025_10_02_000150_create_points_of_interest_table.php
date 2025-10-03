@@ -9,21 +9,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('stations', function (Blueprint $table) {
+        Schema::create('points_of_interest', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 10)->unique();
             $table->string('name');
+            $table->string('category')->default('Landmark');
             $table->string('city');
             $table->string('island')->default('Jawa');
+            $table->foreignId('default_station_id')->nullable()->constrained('stations')->nullOnDelete();
             $table->timestamps();
         });
 
-    DB::statement('ALTER TABLE stations ADD COLUMN location POINT NOT NULL SRID 4326');
-        DB::statement('CREATE SPATIAL INDEX stations_location_spatial_index ON stations (location)');
+        DB::statement('ALTER TABLE points_of_interest ADD COLUMN location POINT NOT NULL SRID 4326');
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('stations');
+        Schema::dropIfExists('points_of_interest');
     }
 };

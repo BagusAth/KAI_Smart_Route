@@ -5,22 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Train extends Model
+class Platform extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'station_id',
         'code',
         'name',
-        'operator',
-        'total_carriages',
-    'type',
-        'class',
+        'description',
     ];
 
-    protected $casts = [
-        'total_carriages' => 'integer',
-    ];
+    public function station()
+    {
+        return $this->belongsTo(Station::class);
+    }
 
     public function routes()
     {
@@ -30,10 +29,5 @@ class Train extends Model
     public function schedules()
     {
         return $this->hasMany(Schedule::class);
-    }
-
-    public function carriages()
-    {
-        return $this->hasMany(TrainCarriage::class);
     }
 }

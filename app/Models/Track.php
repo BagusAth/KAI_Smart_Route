@@ -13,6 +13,18 @@ class Track extends Model
         'station_a_id',
         'station_b_id',
         'line_name',
+        'transport_mode',
+        'distance_km',
+        'average_duration_minutes',
+        'base_fare',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'distance_km' => 'float',
+        'average_duration_minutes' => 'integer',
+        'base_fare' => 'float',
+        'is_active' => 'boolean',
     ];
 
     public function stationA()

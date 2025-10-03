@@ -100,68 +100,117 @@
 						<div class="mx-auto max-w-5xl px-6 lg:px-8">
 							<form
 								id="search-form"
-								method="GET"
-								action="{{ route('home') }}"
+								action="{{ route('routes.recommend') }}"
+								method="POST"
 								class="grid gap-4 rounded-[32px] border border-indigo-100 bg-white p-6 shadow-[0_24px_64px_rgba(79,70,229,0.16)] sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto]"
 							>
+								@csrf
+
+								@if (session('status'))
+									<div class="col-span-full rounded-2xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-sm text-indigo-700">
+										{{ session('status') }}
+									</div>
+								@endif
+
+								@if ($errors->any())
+									<div class="col-span-full rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+										<ul class="space-y-1">
+											@foreach ($errors->all() as $error)
+												<li>{{ $error }}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
+								<div class="col-span-full hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600" id="form-errors-wrapper">
+									<ul class="space-y-1" id="form-errors"></ul>
+								</div>
+
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">From</span>
-									<select
-										name="from_station"
-										id="from_station"
-										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
-										required
-									>
-										<option value="" disabled {{ $selectedFrom ? '' : 'selected' }}>Pilih stasiun asal</option>
-										@foreach ($stations as $station)
-											<option value="{{ $station->id }}" @selected((int) $selectedFrom === $station->id)>
-												{{ $station->name }} ({{ $station->city }})
-											</option>
-										@endforeach
-									</select>
+									<div class="relative">
+										<input
+											type="text"
+											name="origin_label"
+											id="origin-display"
+											autocomplete="off"
+											list="origin-stations"
+											value="{{ old('origin_label') }}"
+											placeholder="Cari stasiun keberangkatan"
+											class="peer w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+											required
+										/>
+										<input type="hidden" name="origin" id="origin" value="{{ old('origin') }}">
+										<datalist id="origin-stations">
+											@foreach ($stationOptions ?? [] as $station)
+												<option value="{{ $station['label'] }}" data-code="{{ $station['code'] }}">{{ $station['code'] }} &middot; {{ $station['city'] }}</option>
+											@endforeach
+										</datalist>
+										<span class="pointer-events-none absolute inset-y-0 right-4 hidden items-center text-indigo-500 peer-focus:flex">
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+											</svg>
+										</span>
+									</div>
 								</label>
+
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">To</span>
-									<select
-										name="to_station"
-										id="to_station"
+									<div class="relative">
+										<input
+											type="text"
+											name="destination_label"
+											id="destination-display"
+											autocomplete="off"
+											list="destination-stations"
+											value="{{ old('destination_label') }}"
+											placeholder="Cari stasiun tujuan"
+											class="peer w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+											required
+										/>
+										<input type="hidden" name="destination" id="destination" value="{{ old('destination') }}">
+										<datalist id="destination-stations">
+											@foreach ($stationOptions ?? [] as $station)
+												<option value="{{ $station['label'] }}" data-code="{{ $station['code'] }}">{{ $station['code'] }} &middot; {{ $station['city'] }}</option>
+											@endforeach
+										</datalist>
+										<span class="pointer-events-none absolute inset-y-0 right-4 hidden items-center text-indigo-500 peer-focus:flex">
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+											</svg>
+										</span>
+									</div>
+								</label>
+
+								<label class="space-y-2 text-left">
+									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tanggal Keberangkatan</span>
+									<input
+										type="date"
+										name="departure_date"
+										id="departure-date"
+										min="{{ $departureDateMin ?? now()->format('Y-m-d') }}"
+										value="{{ old('departure_date', $departureDateMin ?? now()->format('Y-m-d')) }}"
 										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
 										required
-									>
-										<option value="" disabled {{ $selectedTo ? '' : 'selected' }}>Pilih stasiun tujuan</option>
-										@foreach ($stations as $station)
-											<option value="{{ $station->id }}" @selected((int) $selectedTo === $station->id)>
-												{{ $station->name }} ({{ $station->city }})
-											</option>
-										@endforeach
-									</select>
+									/>
 								</label>
+
 								<label class="space-y-2 text-left">
-									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Departure Time</span>
+									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Penumpang Dewasa</span>
 									<select
-										name="departure_time"
-										id="departure_time"
-										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										name="passengers"
+										id="passengers"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										data-placeholder-select
+										required
 									>
-										<option value="" {{ $selectedDeparture ? '' : 'selected' }}>Semua jadwal</option>
-										@foreach ($availableDepartureTimes as $time)
-											<option value="{{ $time }}" @selected($selectedDeparture === $time)>{{ $time }}</option>
+										<option value="" disabled {{ old('passengers') ? '' : 'selected' }}>Pilih jumlah penumpang</option>
+										@foreach (($passengerOptions ?? []) as $option)
+											<option value="{{ $option }}" {{ (string) old('passengers') === (string) $option ? 'selected' : '' }}>{{ $option }} Dewasa</option>
 										@endforeach
 									</select>
 								</label>
-								<label class="space-y-2 text-left">
-									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Class</span>
-									<select
-										name="train_class"
-										id="train_class"
-										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
-									>
-										<option value="" {{ $selectedClass ? '' : 'selected' }}>Semua kelas</option>
-										@foreach ($trainClasses as $class)
-											<option value="{{ $class }}" @selected($selectedClass === $class)>{{ $class }}</option>
-										@endforeach
-									</select>
-								</label>
+
 								<button
 									type="submit"
 									class="hidden h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white transition hover:from-indigo-600 hover:to-purple-600 lg:flex"
@@ -179,59 +228,80 @@
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-4.35-4.35m1.85-4.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
 									</svg>
 									Cari Kereta
-								</button>
-							</form>
+							</button>
+						</form>
+						</div>
+					</section>
 
-							@if ($sameStationSelected)
-								<p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
-									Stasiun asal dan tujuan tidak boleh sama.
+					<section id="popular-routes" class="relative z-10 bg-white py-24">
+						<div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 text-center lg:px-8">
+							<div class="space-y-4">
+								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Discover the most popular train routes chosen by passengers every day.</h2>
+								<p class="mx-auto max-w-2xl text-sm text-slate-600 sm:text-base">
+									Temukan inspirasi perjalanan dari rute terfavorit dengan jadwal terbaik dan pengalaman paling nyaman setiap hari.
 								</p>
-							@endif
-
-							@if ($searchPerformed)
-								<div class="mt-6 space-y-4">
-									<h3 class="text-lg font-semibold text-slate-800">Hasil pencarian</h3>
-									@if ($searchResults->isEmpty() && ! $sameStationSelected)
-										<div class="rounded-3xl border border-slate-100 bg-slate-50 px-6 py-8 text-sm text-slate-600 shadow-sm">
-											Tidak ditemukan jadwal kereta sesuai filter yang dipilih.
+							</div>
+							@php
+								$popularRoutes = [
+									[
+										'image' => 'https://images.unsplash.com/photo-1578771792482-1e7eb2b8b447?q=80&w=1271&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+										'title' => 'Surabaya - Semarang',
+										'subtitle' => '4 jam perjalanan dengan KA Argo Bromo',
+										'destination' => 'Semarang Tawang',
+										'destination_image' => 'https://images.unsplash.com/photo-1523268266866-5dbd36907f00?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+									],
+									[
+										'image' => 'https://images.unsplash.com/photo-1562923928-6078542d1ad1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+										'title' => 'Semarang - Jakarta',
+										'subtitle' => 'Jadwal fleksibel, 6 jam perjalanan nyaman setiap hari',
+										'destination' => 'Gambir Jakarta',
+										'destination_image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=400&q=80',
+									],
+									[
+										'image' => 'https://plus.unsplash.com/premium_photo-1714879804862-683216104086?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+										'title' => 'Bandung - Yogyakarta',
+										'subtitle' => 'Nikmati pemandangan alam dalam 7 jam perjalanan KA Lodaya',
+										'destination' => 'Yogyakarta Tugu',
+										'destination_image' => 'https://images.unsplash.com/photo-1553184257-604db3e574a8?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+									],
+								];
+							@endphp
+							<div class="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
+								@foreach ($popularRoutes as $route)
+								<article class="group relative flex min-h-[420px] overflow-hidden rounded-[32px] border border-white/20 shadow-[0_18px_48px_rgba(15,23,42,0.18)] transition duration-700 hover:-translate-y-1 hover:shadow-[0_32px_72px_rgba(15,23,42,0.26)]">
+									<img src="{{ $route['image'] }}" alt="{{ $route['title'] }}" class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
+									<div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-slate-900/10"></div>
+									<div class="relative mt-auto flex w-full flex-col gap-4 p-6 text-left text-white sm:p-8">
+										<div class="space-y-1">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">{{ $loop->iteration < 10 ? '0' . $loop->iteration : $loop->iteration }} Popular Route</p>
+											<h3 class="text-xl font-semibold sm:text-2xl">{{ $route['title'] }}</h3>
+											<p class="text-sm text-white/80 sm:text-base">{{ $route['subtitle'] }}</p>
 										</div>
-									@else
-										<div class="grid gap-4">
-											@foreach ($searchResults as $result)
-												<article class="rounded-3xl border border-indigo-50 bg-white p-6 shadow-[0_12px_36px_rgba(79,70,229,0.12)] transition hover:-translate-y-[2px] hover:shadow-[0_16px_48px_rgba(79,70,229,0.16)]">
-													<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-														<div>
-															<h4 class="text-base font-semibold text-slate-900">{{ $result['train_name'] }} <span class="text-sm font-medium text-slate-500">({{ $result['train_code'] }})</span></h4>
-															<p class="text-sm font-medium text-indigo-600">{{ $result['class'] }}</p>
-														</div>
-														<div class="flex flex-col gap-2 text-sm text-slate-600 md:text-base">
-															<div class="flex items-center gap-3">
-																<div class="rounded-2xl bg-indigo-50 px-4 py-2 text-left">
-																	<p class="text-xs uppercase tracking-wider text-indigo-500">Berangkat</p>
-																	<p class="font-semibold text-slate-900">{{ $result['departure_time'] ?? '—' }}</p>
-																	<p class="text-xs text-slate-500">{{ $result['from_station'] ?? 'Stasiun tidak diketahui' }}</p>
-																</div>
-																<div class="rounded-2xl bg-slate-100 px-4 py-2 text-left">
-																	<p class="text-xs uppercase tracking-wider text-slate-500">Tiba</p>
-																	<p class="font-semibold text-slate-900">{{ $result['arrival_time'] ?? '—' }}</p>
-																	<p class="text-xs text-slate-500">{{ $result['to_station'] ?? 'Stasiun tidak diketahui' }}</p>
-																</div>
-															</div>
-															@if ($result['duration'])
-																<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Durasi perjalanan: <span class="font-semibold text-slate-800">{{ $result['duration'] }}</span></p>
-															@endif
-														</div>
-													@if (! empty($result['route_stops']))
-														<div class="mt-4 text-xs text-slate-500">
-															Rute: {{ implode(' • ', $result['route_stops']) }}
-														</div>
-													@endif
-												</article>
-											@endforeach
+										<div class="flex items-center gap-3">
+											<div class="h-12 w-12 overflow-hidden rounded-full border border-white/50 shadow-lg">
+												<img src="{{ $route['destination_image'] }}" alt="{{ $route['destination'] }}" class="h-full w-full object-cover" />
+											</div>
+											<div class="flex flex-col">
+												<span class="text-xs font-semibold uppercase tracking-wide text-white/70">Destinasi akhir</span>
+												<span class="text-sm font-semibold text-white">{{ $route['destination'] }}</span>
+											</div>
 										</div>
-									@endif
-								</div>
-							@endif
+										<div class="flex items-center justify-between">
+											<div class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+												<span>Explore</span>
+												<span class="h-1.5 w-1.5 rounded-full bg-white/60"></span>
+												<span>Now</span>
+											</div>
+											<button type="button" class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-indigo-600 shadow-lg transition hover:bg-white">
+												<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+												</svg>
+											</button>
+										</div>
+									</div>
+								</article>
+								@endforeach
+							</div>
 						</div>
 					</section>
 
@@ -239,10 +309,45 @@
 						<div class="mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 text-center lg:px-8">
 							<div class="space-y-4">
 								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">TRAINS</h2>
-								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train routes.</p>
+								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train.</p>
 							</div>
 							<div class="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-5">
-								@forelse ($popularTrains as $train)
+								@php
+									$trains = [
+										[
+											'name' => 'KA Progo',
+											'image' => 'https://images.unsplash.com/photo-1527295110-5145f6b148d0?q=80&w=1131&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'badge' => null,
+											'color' => 'bg-indigo-500'
+										],
+										[
+											'name' => 'KA Kertajaya',
+											'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1284&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'badge' => null,
+											'color' => 'bg-blue-600'
+										],
+										[
+											'name' => 'KA Menoreh',
+											'image' => 'https://images.unsplash.com/photo-1601999007938-f584b47324ac?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'badge' => 'Explore',
+											'color' => 'bg-slate-900'
+										],
+										[
+											'name' => 'KA Harina',
+											'image' => 'https://images.unsplash.com/photo-1514337224818-9787cf717f2a?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'badge' => null,
+											'color' => 'bg-orange-500'
+										],
+										[
+											'name' => 'KA Ambarawa',
+											'image' => 'https://images.unsplash.com/flagged/photo-1550719723-8602e87f2dc8?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'badge' => null,
+											'color' => 'bg-amber-500'
+										],
+									];
+								@endphp
+
+								@foreach ($trains as $train)
 									<article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_28px_60px_rgba(15,23,42,0.16)]">
 										<div class="relative h-48 w-full overflow-hidden">
 											<img src="{{ $train['image'] }}" alt="{{ $train['name'] }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
@@ -312,6 +417,15 @@
 				const menuButton = document.querySelector('[data-menu-button]');
 				const menuPanel = document.querySelector('[data-menu-panel]');
 				const searchForm = document.getElementById('search-form');
+				const originInput = document.getElementById('origin-display');
+				const destinationInput = document.getElementById('destination-display');
+				const originHidden = document.getElementById('origin');
+				const destinationHidden = document.getElementById('destination');
+				const departureDateInput = document.getElementById('departure-date');
+				const passengersSelect = document.getElementById('passengers');
+				const stationOptions = @json($stationOptions ?? []);
+				const formErrorsWrapper = document.getElementById('form-errors-wrapper');
+				const formErrorsList = document.getElementById('form-errors');
 
 				if (menuButton && menuPanel) {
 					menuButton.addEventListener('click', () => {
@@ -321,24 +435,130 @@
 					});
 				}
 
+				const findStationByLabel = (value) => {
+					if (!value) {
+						return null;
+					}
+
+					const normalized = value.trim().toLowerCase();
+					return stationOptions.find((station) => {
+						return station.label.toLowerCase() === normalized
+							|| station.name.toLowerCase() === normalized
+							|| station.code.toLowerCase() === normalized;
+					});
+				};
+
+				const syncStationValue = (input, hidden) => {
+					const match = findStationByLabel(input.value);
+					hidden.value = match ? match.code : '';
+				};
+
+				if (originInput && originHidden) {
+					['input', 'change', 'blur'].forEach((eventName) => {
+						originInput.addEventListener(eventName, () => syncStationValue(originInput, originHidden));
+					});
+					syncStationValue(originInput, originHidden);
+				}
+
+				if (destinationInput && destinationHidden) {
+					['input', 'change', 'blur'].forEach((eventName) => {
+						destinationInput.addEventListener(eventName, () => syncStationValue(destinationInput, destinationHidden));
+					});
+					syncStationValue(destinationInput, destinationHidden);
+				}
+
+				const renderErrors = (messages) => {
+					if (!formErrorsWrapper || !formErrorsList) {
+						return;
+					}
+
+					formErrorsList.innerHTML = '';
+					if (!messages.length) {
+						formErrorsWrapper.classList.add('hidden');
+						return;
+					}
+
+					messages.forEach((message) => {
+						const li = document.createElement('li');
+						li.textContent = message;
+						formErrorsList.appendChild(li);
+					});
+
+					formErrorsWrapper.classList.remove('hidden');
+				};
+
 				if (searchForm) {
 					searchForm.addEventListener('submit', (event) => {
-						event.preventDefault();
-						const button = searchForm.querySelector('button[type="submit"]');
-						if (!button) {
+						syncStationValue(originInput, originHidden);
+						syncStationValue(destinationInput, destinationHidden);
+
+						const messages = [];
+
+						if (!originHidden.value) {
+							messages.push('Silakan pilih stasiun keberangkatan yang valid.');
+						}
+
+						if (!destinationHidden.value) {
+							messages.push('Silakan pilih stasiun tujuan yang valid.');
+						}
+
+						if (originHidden.value && destinationHidden.value && originHidden.value === destinationHidden.value) {
+							messages.push('Stasiun keberangkatan dan tujuan tidak boleh sama.');
+						}
+
+						if (departureDateInput) {
+							const minDate = departureDateInput.min;
+							const selectedDate = departureDateInput.value;
+
+							if (!selectedDate) {
+								messages.push('Silakan pilih tanggal keberangkatan.');
+							} else if (minDate && selectedDate < minDate) {
+								messages.push('Tanggal keberangkatan tidak boleh sebelum hari ini.');
+							}
+						}
+
+						if (passengersSelect && !passengersSelect.value) {
+							messages.push('Silakan pilih jumlah penumpang dewasa.');
+						}
+
+						if (messages.length) {
+							event.preventDefault();
+							renderErrors(messages);
 							return;
 						}
 
-						button.classList.add('scale-[103%]');
-						button.classList.add('ring-4');
-						button.classList.add('ring-indigo-200/70');
-
-						setTimeout(() => {
-							button.classList.remove('scale-[103%]');
-							button.classList.remove('ring-4');
-							button.classList.remove('ring-indigo-200/70');
-						}, 320);
+						renderErrors([]);
 					});
+				}
+
+				const placeholderSelects = document.querySelectorAll('[data-placeholder-select]');
+
+				const syncSelectPlaceholder = (select) => {
+					const hasValue = Boolean(select.value);
+					select.classList.toggle('text-slate-700', hasValue);
+					select.classList.toggle('text-slate-400', !hasValue);
+				};
+
+				placeholderSelects.forEach((select) => {
+					syncSelectPlaceholder(select);
+					select.addEventListener('change', () => syncSelectPlaceholder(select));
+					select.addEventListener('blur', () => syncSelectPlaceholder(select));
+				});
+
+				if (departureDateInput) {
+					const minDate = departureDateInput.min;
+					const enforceMinDate = () => {
+						if (!minDate) {
+							return;
+						}
+
+						if (departureDateInput.value && departureDateInput.value < minDate) {
+							departureDateInput.value = minDate;
+						}
+					};
+
+					enforceMinDate();
+					departureDateInput.addEventListener('change', enforceMinDate);
 				}
 			});
 		</script>
