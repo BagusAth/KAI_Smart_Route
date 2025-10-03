@@ -100,38 +100,66 @@
 						<div class="mx-auto max-w-5xl px-6 lg:px-8">
 							<form
 								id="search-form"
+								method="GET"
+								action="{{ route('home') }}"
 								class="grid gap-4 rounded-[32px] border border-indigo-100 bg-white p-6 shadow-[0_24px_64px_rgba(79,70,229,0.16)] sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto]"
 							>
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">From</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>Semarang</option>
-										<option>Yogyakarta</option>
-										<option>Surabaya</option>
+									<select
+										name="from_station"
+										id="from_station"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										required
+									>
+										<option value="" disabled {{ $selectedFrom ? '' : 'selected' }}>Pilih stasiun asal</option>
+										@foreach ($stations as $station)
+											<option value="{{ $station->id }}" @selected((int) $selectedFrom === $station->id)>
+												{{ $station->name }} ({{ $station->city }})
+											</option>
+										@endforeach
 									</select>
 								</label>
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">To</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>Semarang</option>
-										<option>Jakarta</option>
-										<option>Bandung</option>
+									<select
+										name="to_station"
+										id="to_station"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										required
+									>
+										<option value="" disabled {{ $selectedTo ? '' : 'selected' }}>Pilih stasiun tujuan</option>
+										@foreach ($stations as $station)
+											<option value="{{ $station->id }}" @selected((int) $selectedTo === $station->id)>
+												{{ $station->name }} ({{ $station->city }})
+											</option>
+										@endforeach
 									</select>
 								</label>
 								<label class="space-y-2 text-left">
-									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">From</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>20:00</option>
-										<option>21:00</option>
-										<option>22:00</option>
+									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Departure Time</span>
+									<select
+										name="departure_time"
+										id="departure_time"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+									>
+										<option value="" {{ $selectedDeparture ? '' : 'selected' }}>Semua jadwal</option>
+										@foreach ($availableDepartureTimes as $time)
+											<option value="{{ $time }}" @selected($selectedDeparture === $time)>{{ $time }}</option>
+										@endforeach
 									</select>
 								</label>
 								<label class="space-y-2 text-left">
-									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">To</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>00:00</option>
-										<option>01:00</option>
-										<option>02:00</option>
+									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Class</span>
+									<select
+										name="train_class"
+										id="train_class"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+									>
+										<option value="" {{ $selectedClass ? '' : 'selected' }}>Semua kelas</option>
+										@foreach ($trainClasses as $class)
+											<option value="{{ $class }}" @selected($selectedClass === $class)>{{ $class }}</option>
+										@endforeach
 									</select>
 								</label>
 								<button
@@ -153,6 +181,57 @@
 									Cari Kereta
 								</button>
 							</form>
+
+							@if ($sameStationSelected)
+								<p class="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
+									Stasiun asal dan tujuan tidak boleh sama.
+								</p>
+							@endif
+
+							@if ($searchPerformed)
+								<div class="mt-6 space-y-4">
+									<h3 class="text-lg font-semibold text-slate-800">Hasil pencarian</h3>
+									@if ($searchResults->isEmpty() && ! $sameStationSelected)
+										<div class="rounded-3xl border border-slate-100 bg-slate-50 px-6 py-8 text-sm text-slate-600 shadow-sm">
+											Tidak ditemukan jadwal kereta sesuai filter yang dipilih.
+										</div>
+									@else
+										<div class="grid gap-4">
+											@foreach ($searchResults as $result)
+												<article class="rounded-3xl border border-indigo-50 bg-white p-6 shadow-[0_12px_36px_rgba(79,70,229,0.12)] transition hover:-translate-y-[2px] hover:shadow-[0_16px_48px_rgba(79,70,229,0.16)]">
+													<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+														<div>
+															<h4 class="text-base font-semibold text-slate-900">{{ $result['train_name'] }} <span class="text-sm font-medium text-slate-500">({{ $result['train_code'] }})</span></h4>
+															<p class="text-sm font-medium text-indigo-600">{{ $result['class'] }}</p>
+														</div>
+														<div class="flex flex-col gap-2 text-sm text-slate-600 md:text-base">
+															<div class="flex items-center gap-3">
+																<div class="rounded-2xl bg-indigo-50 px-4 py-2 text-left">
+																	<p class="text-xs uppercase tracking-wider text-indigo-500">Berangkat</p>
+																	<p class="font-semibold text-slate-900">{{ $result['departure_time'] ?? '—' }}</p>
+																	<p class="text-xs text-slate-500">{{ $result['from_station'] ?? 'Stasiun tidak diketahui' }}</p>
+																</div>
+																<div class="rounded-2xl bg-slate-100 px-4 py-2 text-left">
+																	<p class="text-xs uppercase tracking-wider text-slate-500">Tiba</p>
+																	<p class="font-semibold text-slate-900">{{ $result['arrival_time'] ?? '—' }}</p>
+																	<p class="text-xs text-slate-500">{{ $result['to_station'] ?? 'Stasiun tidak diketahui' }}</p>
+																</div>
+															</div>
+															@if ($result['duration'])
+																<p class="text-xs font-medium uppercase tracking-wider text-slate-500">Durasi perjalanan: <span class="font-semibold text-slate-800">{{ $result['duration'] }}</span></p>
+															@endif
+														</div>
+													@if (! empty($result['route_stops']))
+														<div class="mt-4 text-xs text-slate-500">
+															Rute: {{ implode(' • ', $result['route_stops']) }}
+														</div>
+													@endif
+												</article>
+											@endforeach
+										</div>
+									@endif
+								</div>
+							@endif
 						</div>
 					</section>
 
@@ -163,57 +242,22 @@
 								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train routes.</p>
 							</div>
 							<div class="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-5">
-								@php
-									$trains = [
-										[
-											'name' => 'KA Progo',
-											'image' => 'https://images.unsplash.com/photo-1526466692211-0d13a06b94cb?auto=format&fit=crop&w=700&q=80',
-											'badge' => null,
-											'color' => 'bg-indigo-500'
-										],
-										[
-											'name' => 'KA Kertajaya',
-											'image' => 'https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=700&q=80',
-											'badge' => null,
-											'color' => 'bg-blue-600'
-										],
-										[
-											'name' => 'KA Menoreh',
-											'image' => 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=700&q=80',
-											'badge' => 'Explore',
-											'color' => 'bg-slate-900'
-										],
-										[
-											'name' => 'KA Harina',
-											'image' => 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?auto=format&fit=crop&w=700&q=80',
-											'badge' => null,
-											'color' => 'bg-orange-500'
-										],
-										[
-											'name' => 'KA Ambarawa',
-											'image' => 'https://images.unsplash.com/photo-1523634921619-37ce98fb2807?auto=format&fit=crop&w=700&q=80',
-											'badge' => null,
-											'color' => 'bg-amber-500'
-										],
-									];
-								@endphp
-
-								@foreach ($trains as $train)
+								@forelse ($popularTrains as $train)
 									<article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_28px_60px_rgba(15,23,42,0.16)]">
 										<div class="relative h-48 w-full overflow-hidden">
 											<img src="{{ $train['image'] }}" alt="{{ $train['name'] }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-											@if ($train['badge'])
-												<span class="absolute right-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['badge'] }}</span>
-											@endif
+											<span class="absolute right-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['class'] }}</span>
 										</div>
 										<div class="flex flex-1 items-center justify-between px-4 py-4">
 											<h3 class="text-sm font-semibold text-slate-800">{{ $train['name'] }}</h3>
 											<span class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-full px-3 text-xs font-semibold text-white {{ $train['color'] }}">
-												{{ explode(' ', trim($train['name']))[1] ?? 'Rail' }}
+												{{ $train['code'] }}
 											</span>
 										</div>
 									</article>
-								@endforeach
+								@empty
+									<p class="col-span-full rounded-3xl border border-slate-100 bg-white px-6 py-8 text-sm text-slate-600 shadow-sm">Belum ada data kereta untuk ditampilkan.</p>
+								@endforelse
 							</div>
 						</div>
 					</section>
