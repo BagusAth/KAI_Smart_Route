@@ -12,7 +12,7 @@
 <header class="w-full {{ $headerClasses }}">
 	<nav class="{{ $navClasses }}">
 		<a href="{{ $homeBase }}" class="text-2xl font-semibold tracking-tight text-indigo-600">
-			RailLink
+			KAIzen
 		</a>
 		<div class="flex items-center gap-2 lg:hidden">
 			<a

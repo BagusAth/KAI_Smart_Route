@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>{{ config('app.name', 'RailLink') }}</title>
+		<title>{{ config('app.name', 'KAIzen') }}</title>
 
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -320,7 +320,7 @@
 				<footer id="contact" class="home-footer py-14">
 					<div class="mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 text-center lg:px-8">
 						<div class="flex flex-col items-center gap-4">
-							<a href="#" class="text-2xl font-bold tracking-wide">RailLink</a>
+							<a href="#" class="text-2xl font-bold tracking-wide">KAIzen</a>
 							<div class="flex items-center gap-4 text-white/90">
 								<a href="#" aria-label="Facebook" class="transition hover:text-white">
 									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
