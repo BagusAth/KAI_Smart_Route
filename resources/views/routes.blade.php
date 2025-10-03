@@ -14,8 +14,9 @@
 		/>
 
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
+		<link rel="stylesheet" href="{{ asset('css/routes.css') }}">
 	</head>
-	<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-100 text-slate-900 antialiased">
+	<body class="routes-page-body min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-100 text-slate-900 antialiased">
 		<div class="relative flex min-h-screen flex-col">
 			<div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-72 bg-gradient-to-b from-indigo-200/60 via-white to-transparent blur-2xl"></div>
 			@include('header', [
@@ -49,7 +50,11 @@
 						@foreach ($dateOptions as $option)
 							<button
 								type="button"
-								class="inline-flex min-w-[120px] items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition focus:outline-none focus:ring-4 focus:ring-indigo-200/60 {{ $option['is_active'] ? 'border-transparent bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-[0_12px_30px_rgba(79,70,229,0.25)]' : 'border-indigo-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-600' }}"
+								class="date-option-button inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition focus:outline-none focus:ring-4 focus:ring-indigo-200/60 {{ $option['is_active'] ? 'is-active' : '' }}"
+								data-date-option
+								data-date-value="{{ $option['date'] }}"
+								data-date-day="{{ $option['day'] }}"
+								aria-pressed="{{ $option['is_active'] ? 'true' : 'false' }}"
 							>
 								<span>{{ $option['day'] }}</span>
 								<span class="text-xs font-medium uppercase tracking-wide">{{ $option['date'] }}</span>
@@ -101,10 +106,10 @@
 									->all();
 							@endphp
 
-							<article class="rounded-[32px] border border-indigo-100 bg-white/90 p-8 shadow-[0_24px_60px_rgba(79,70,229,0.16)] backdrop-blur transition duration-500 hover:-translate-y-1 hover:shadow-[0_32px_80px_rgba(79,70,229,0.22)]">
+							<article class="route-card border border-indigo-100 bg-white/90 p-8 backdrop-blur transition duration-500">
 								<div class="flex flex-wrap items-start justify-between gap-6">
 									<div>
-										<p class="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-500">{{ $recommendation['title'] ?? 'Rekomendasi Rute' }}</p>
+										<p class="route-card-label text-sm font-semibold uppercase text-indigo-500">{{ $recommendation['title'] ?? 'Rekomendasi Rute' }}</p>
 										<h2 class="mt-2 text-xl font-semibold text-slate-900">Perjalanan Multi-Moda</h2>
 									</div>
 									<div class="text-right">
@@ -159,8 +164,8 @@
 													@endif
 												</div>
 												@if (!$loop->last)
-													<div class="hidden h-[2px] flex-1 self-center rounded-full bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 sm:block"></div>
-													<div class="block h-[2px] w-16 self-center rounded-full bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 sm:hidden"></div>
+													<div class="hidden route-connector route-connector--full flex-1 self-center sm:block"></div>
+													<div class="block route-connector route-connector--short self-center sm:hidden"></div>
 												@endif
 											</div>
 										@endforeach
@@ -187,5 +192,6 @@
 				</section>
 			</main>
 		</div>
+	<script src="{{ asset('js/routes.js') }}" defer></script>
 	</body>
 </html>

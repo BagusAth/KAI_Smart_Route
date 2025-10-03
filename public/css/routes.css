@@ -1,0 +1,68 @@
+body.routes-page-body {
+	font-family: 'Poppins', sans-serif;
+}
+
+.date-option-button {
+	min-width: 120px;
+	border-color: rgba(99, 102, 241, 0.3);
+	background-color: #ffffff;
+	color: #475569;
+	box-shadow: none;
+	transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.date-option-button:hover,
+.date-option-button:focus-visible {
+	border-color: rgba(99, 102, 241, 0.45);
+	color: #4338ca;
+}
+
+.date-option-button.is-active {
+	border-color: transparent;
+	color: #ffffff;
+	background-image: linear-gradient(135deg, #4f46e5, #a855f7);
+	box-shadow: 0 12px 30px rgba(79, 70, 229, 0.25);
+}
+
+.date-option-button.is-active:hover,
+.date-option-button.is-active:focus-visible {
+	color: #ffffff;
+	border-color: transparent;
+}
+
+.route-card {
+	border-radius: 32px;
+	box-shadow: 0 24px 60px rgba(79, 70, 229, 0.16);
+	transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.route-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 32px 80px rgba(79, 70, 229, 0.22);
+}
+
+.route-card-label {
+	letter-spacing: 0.2em;
+}
+
+.route-connector {
+	height: 2px;
+	border-radius: 9999px;
+	background-image: linear-gradient(90deg, rgba(129, 140, 248, 0.5), rgba(196, 181, 253, 0.5), rgba(244, 114, 182, 0.45));
+	flex-shrink: 0;
+}
+
+.route-connector--short {
+	width: 4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.date-option-button,
+	.route-card {
+		transition-duration: 0.001ms;
+	}
+
+	.route-card:hover {
+		transform: none;
+	}
+}
