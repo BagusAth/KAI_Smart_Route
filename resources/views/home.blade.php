@@ -187,6 +187,7 @@
 									<select
 										name="start_time"
 										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										data-placeholder-select
 										required
 									>
 										<option value="" disabled {{ old('start_time') ? '' : 'selected' }}>Pilih jam mulai</option>
@@ -201,6 +202,7 @@
 									<select
 										name="end_time"
 										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										data-placeholder-select
 										required
 									>
 										<option value="" disabled {{ old('end_time') ? '' : 'selected' }}>Pilih jam akhir</option>
@@ -232,42 +234,114 @@
 						</div>
 					</section>
 
+					<section id="popular-routes" class="relative z-10 bg-white py-24">
+						<div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 text-center lg:px-8">
+							<div class="space-y-4">
+								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Discover the most popular train routes chosen by passengers every day.</h2>
+								<p class="mx-auto max-w-2xl text-sm text-slate-600 sm:text-base">
+									Temukan inspirasi perjalanan dari rute terfavorit dengan jadwal terbaik dan pengalaman paling nyaman setiap hari.
+								</p>
+							</div>
+							@php
+								$popularRoutes = [
+									[
+										'image' => 'https://images.unsplash.com/photo-1578771792482-1e7eb2b8b447?q=80&w=1271&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+										'title' => 'Surabaya - Semarang',
+										'subtitle' => '4 jam perjalanan dengan KA Argo Bromo',
+										'destination' => 'Semarang Tawang',
+										'destination_image' => 'https://images.unsplash.com/photo-1523268266866-5dbd36907f00?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+									],
+									[
+										'image' => 'https://images.unsplash.com/photo-1562923928-6078542d1ad1?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+										'title' => 'Semarang - Jakarta',
+										'subtitle' => 'Jadwal fleksibel, 6 jam perjalanan nyaman setiap hari',
+										'destination' => 'Gambir Jakarta',
+										'destination_image' => 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=400&q=80',
+									],
+									[
+										'image' => 'https://plus.unsplash.com/premium_photo-1714879804862-683216104086?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+										'title' => 'Bandung - Yogyakarta',
+										'subtitle' => 'Nikmati pemandangan alam dalam 7 jam perjalanan KA Lodaya',
+										'destination' => 'Yogyakarta Tugu',
+										'destination_image' => 'https://images.unsplash.com/photo-1553184257-604db3e574a8?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+									],
+								];
+							@endphp
+							<div class="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
+								@foreach ($popularRoutes as $route)
+								<article class="group relative flex min-h-[420px] overflow-hidden rounded-[32px] border border-white/20 shadow-[0_18px_48px_rgba(15,23,42,0.18)] transition duration-700 hover:-translate-y-1 hover:shadow-[0_32px_72px_rgba(15,23,42,0.26)]">
+									<img src="{{ $route['image'] }}" alt="{{ $route['title'] }}" class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
+									<div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-slate-900/10"></div>
+									<div class="relative mt-auto flex w-full flex-col gap-4 p-6 text-left text-white sm:p-8">
+										<div class="space-y-1">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">{{ $loop->iteration < 10 ? '0' . $loop->iteration : $loop->iteration }} Popular Route</p>
+											<h3 class="text-xl font-semibold sm:text-2xl">{{ $route['title'] }}</h3>
+											<p class="text-sm text-white/80 sm:text-base">{{ $route['subtitle'] }}</p>
+										</div>
+										<div class="flex items-center gap-3">
+											<div class="h-12 w-12 overflow-hidden rounded-full border border-white/50 shadow-lg">
+												<img src="{{ $route['destination_image'] }}" alt="{{ $route['destination'] }}" class="h-full w-full object-cover" />
+											</div>
+											<div class="flex flex-col">
+												<span class="text-xs font-semibold uppercase tracking-wide text-white/70">Destinasi akhir</span>
+												<span class="text-sm font-semibold text-white">{{ $route['destination'] }}</span>
+											</div>
+										</div>
+										<div class="flex items-center justify-between">
+											<div class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+												<span>Explore</span>
+												<span class="h-1.5 w-1.5 rounded-full bg-white/60"></span>
+												<span>Now</span>
+											</div>
+											<button type="button" class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-indigo-600 shadow-lg transition hover:bg-white">
+												<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+												</svg>
+											</button>
+										</div>
+									</div>
+								</article>
+								@endforeach
+							</div>
+						</div>
+					</section>
+
 					<section id="trains" class="relative py-20">
 						<div class="mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 text-center lg:px-8">
 							<div class="space-y-4">
 								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">TRAINS</h2>
-								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train routes.</p>
+								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train.</p>
 							</div>
 							<div class="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-5">
 								@php
 									$trains = [
 										[
 											'name' => 'KA Progo',
-											'image' => 'https://images.unsplash.com/photo-1526466692211-0d13a06b94cb?auto=format&fit=crop&w=700&q=80',
+											'image' => 'https://images.unsplash.com/photo-1527295110-5145f6b148d0?q=80&w=1131&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 											'badge' => null,
 											'color' => 'bg-indigo-500'
 										],
 										[
 											'name' => 'KA Kertajaya',
-											'image' => 'https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=700&q=80',
+											'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1284&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 											'badge' => null,
 											'color' => 'bg-blue-600'
 										],
 										[
 											'name' => 'KA Menoreh',
-											'image' => 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=700&q=80',
+											'image' => 'https://images.unsplash.com/photo-1601999007938-f584b47324ac?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 											'badge' => 'Explore',
 											'color' => 'bg-slate-900'
 										],
 										[
 											'name' => 'KA Harina',
-											'image' => 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?auto=format&fit=crop&w=700&q=80',
+											'image' => 'https://images.unsplash.com/photo-1514337224818-9787cf717f2a?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 											'badge' => null,
 											'color' => 'bg-orange-500'
 										],
 										[
 											'name' => 'KA Ambarawa',
-											'image' => 'https://images.unsplash.com/photo-1523634921619-37ce98fb2807?auto=format&fit=crop&w=700&q=80',
+											'image' => 'https://images.unsplash.com/flagged/photo-1550719723-8602e87f2dc8?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 											'badge' => null,
 											'color' => 'bg-amber-500'
 										],
@@ -440,6 +514,20 @@
 						renderErrors([]);
 					});
 				}
+
+				const placeholderSelects = document.querySelectorAll('[data-placeholder-select]');
+
+				const syncSelectPlaceholder = (select) => {
+					const hasValue = Boolean(select.value);
+					select.classList.toggle('text-slate-700', hasValue);
+					select.classList.toggle('text-slate-400', !hasValue);
+				};
+
+				placeholderSelects.forEach((select) => {
+					syncSelectPlaceholder(select);
+					select.addEventListener('change', () => syncSelectPlaceholder(select));
+					select.addEventListener('blur', () => syncSelectPlaceholder(select));
+				});
 			});
 		</script>
 	</body>
