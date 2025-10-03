@@ -14,30 +14,31 @@
 		/>
 
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
+		<link rel="stylesheet" href="{{ asset('css/home.css') }}">
 	</head>
-	<body class="min-h-screen bg-white text-slate-900 antialiased">
-		<div class="flex min-h-screen flex-col">
+	<body class="home-page-body" data-stations='@json($stationOptions ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)'>
+		<div class="home-page-container">
 			@include('header', [
 				'headerClasses' => 'sticky top-0 z-50 border-b border-slate-100 bg-white',
 				'navClasses' => 'mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8',
 			])
 
 				<main class="flex-1">
-					<section id="home" class="relative flex h-[calc(100vh-88px)] w-full items-end bg-white">
+					<section id="home" class="home-hero-section">
 						<img
 							src="{{ asset('img/home.png') }}"
 							alt="High-speed train illustration"
-							class="block h-full w-full object-contain object-bottom"
+							class="home-hero-image"
 						/>
 					</section>
 
-					<section class="relative z-20 -mt-20 pb-10">
+					<section class="home-search-section">
 						<div class="mx-auto max-w-5xl px-6 lg:px-8">
 							<form
 								id="search-form"
 								action="{{ route('routes.recommend') }}"
 								method="POST"
-								class="grid gap-4 rounded-[32px] border border-indigo-100 bg-white p-6 shadow-[0_24px_64px_rgba(79,70,229,0.16)] sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto]"
+								class="search-card search-card-grid-lg grid gap-4 border border-indigo-100 bg-white p-6 sm:grid-cols-2 lg:grid-cols-5"
 							>
 								@csrf
 
@@ -168,7 +169,7 @@
 						</div>
 					</section>
 
-					<section id="popular-routes" class="relative z-10 bg-white py-24">
+					<section id="popular-routes" class="home-popular-section">
 						<div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 text-center lg:px-8">
 							<div class="space-y-4">
 								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Discover the most popular train routes chosen by passengers every day.</h2>
@@ -203,12 +204,12 @@
 							@endphp
 							<div class="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
 								@foreach ($popularRoutes as $route)
-								<article class="group relative flex min-h-[420px] overflow-hidden rounded-[32px] border border-white/20 shadow-[0_18px_48px_rgba(15,23,42,0.18)] transition duration-700 hover:-translate-y-1 hover:shadow-[0_32px_72px_rgba(15,23,42,0.26)]">
+								<article class="popular-route-card group relative flex overflow-hidden transition duration-700">
 									<img src="{{ $route['image'] }}" alt="{{ $route['title'] }}" class="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
 									<div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-slate-900/10"></div>
 									<div class="relative mt-auto flex w-full flex-col gap-4 p-6 text-left text-white sm:p-8">
 										<div class="space-y-1">
-											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">{{ $loop->iteration < 10 ? '0' . $loop->iteration : $loop->iteration }} Popular Route</p>
+											<p class="popular-route-label text-xs font-semibold uppercase text-white/70">{{ $loop->iteration < 10 ? '0' . $loop->iteration : $loop->iteration }} Popular Route</p>
 											<h3 class="text-xl font-semibold sm:text-2xl">{{ $route['title'] }}</h3>
 											<p class="text-sm text-white/80 sm:text-base">{{ $route['subtitle'] }}</p>
 										</div>
@@ -222,7 +223,7 @@
 											</div>
 										</div>
 										<div class="flex items-center justify-between">
-											<div class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
+											<div class="popular-route-cta inline-flex items-center gap-2 text-xs uppercase text-white/60">
 												<span>Explore</span>
 												<span class="h-1.5 w-1.5 rounded-full bg-white/60"></span>
 												<span>Now</span>
@@ -240,7 +241,7 @@
 						</div>
 					</section>
 
-					<section id="trains" class="relative py-20">
+					<section id="trains" class="home-trains-section">
 						<div class="mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 text-center lg:px-8">
 							<div class="space-y-4">
 								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">TRAINS</h2>
@@ -293,7 +294,7 @@
 								@endphp
 
 								@forelse ($trains as $train)
-									<article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_28px_60px_rgba(15,23,42,0.16)]">
+									<article class="train-card group flex flex-col overflow-hidden bg-white transition">
 										<div class="relative h-48 w-full overflow-hidden">
 											<img src="{{ $train['image'] }}" alt="{{ $train['name'] }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
 											@if (!empty($train['badge']))
@@ -303,7 +304,7 @@
 										</div>
 										<div class="flex flex-1 items-center justify-between px-4 py-4">
 											<h3 class="text-sm font-semibold text-slate-800">{{ $train['name'] }}</h3>
-											<span class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-full px-3 text-xs font-semibold text-white {{ $train['color'] ?? 'bg-indigo-500' }}">
+											<span class="train-code-badge inline-flex h-8 items-center justify-center rounded-full px-3 text-xs font-semibold text-white {{ $train['color'] ?? 'bg-indigo-500' }}">
 												{{ $train['code'] ?? 'KA' }}
 											</span>
 										</div>
@@ -316,7 +317,7 @@
 					</section>
 				</main>
 
-				<footer id="contact" class="bg-[#4D7CFF] py-14 text-white">
+				<footer id="contact" class="home-footer py-14">
 					<div class="mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 text-center lg:px-8">
 						<div class="flex flex-col items-center gap-4">
 							<a href="#" class="text-2xl font-bold tracking-wide">RailLink</a>
@@ -360,155 +361,6 @@
 			</div>
 		</div>
 
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const menuButton = document.querySelector('[data-menu-button]');
-				const menuPanel = document.querySelector('[data-menu-panel]');
-				const searchForm = document.getElementById('search-form');
-				const originInput = document.getElementById('origin-display');
-				const destinationInput = document.getElementById('destination-display');
-				const originHidden = document.getElementById('origin');
-				const destinationHidden = document.getElementById('destination');
-				const departureDateInput = document.getElementById('departure-date');
-				const passengersSelect = document.getElementById('passengers');
-				const stationOptions = @json($stationOptions ?? []);
-				const formErrorsWrapper = document.getElementById('form-errors-wrapper');
-				const formErrorsList = document.getElementById('form-errors');
-
-				if (menuButton && menuPanel) {
-					menuButton.addEventListener('click', () => {
-						menuPanel.classList.toggle('hidden');
-						menuButton.classList.toggle('bg-indigo-50');
-						menuButton.classList.toggle('border-indigo-300');
-					});
-				}
-
-				const findStationByLabel = (value) => {
-					if (!value) {
-						return null;
-					}
-
-					const normalized = value.trim().toLowerCase();
-					return stationOptions.find((station) => {
-						return station.label.toLowerCase() === normalized
-							|| station.name.toLowerCase() === normalized
-							|| station.code.toLowerCase() === normalized;
-					});
-				};
-
-				const syncStationValue = (input, hidden) => {
-					const match = findStationByLabel(input.value);
-					hidden.value = match ? match.code : '';
-				};
-
-				if (originInput && originHidden) {
-					['input', 'change', 'blur'].forEach((eventName) => {
-						originInput.addEventListener(eventName, () => syncStationValue(originInput, originHidden));
-					});
-					syncStationValue(originInput, originHidden);
-				}
-
-				if (destinationInput && destinationHidden) {
-					['input', 'change', 'blur'].forEach((eventName) => {
-						destinationInput.addEventListener(eventName, () => syncStationValue(destinationInput, destinationHidden));
-					});
-					syncStationValue(destinationInput, destinationHidden);
-				}
-
-				const renderErrors = (messages) => {
-					if (!formErrorsWrapper || !formErrorsList) {
-						return;
-					}
-
-					formErrorsList.innerHTML = '';
-					if (!messages.length) {
-						formErrorsWrapper.classList.add('hidden');
-						return;
-					}
-
-					messages.forEach((message) => {
-						const li = document.createElement('li');
-						li.textContent = message;
-						formErrorsList.appendChild(li);
-					});
-
-					formErrorsWrapper.classList.remove('hidden');
-				};
-
-				if (searchForm) {
-					searchForm.addEventListener('submit', (event) => {
-						syncStationValue(originInput, originHidden);
-						syncStationValue(destinationInput, destinationHidden);
-
-						const messages = [];
-
-						if (!originHidden.value) {
-							messages.push('Silakan pilih stasiun keberangkatan yang valid.');
-						}
-
-						if (!destinationHidden.value) {
-							messages.push('Silakan pilih stasiun tujuan yang valid.');
-						}
-
-						if (originHidden.value && destinationHidden.value && originHidden.value === destinationHidden.value) {
-							messages.push('Stasiun keberangkatan dan tujuan tidak boleh sama.');
-						}
-
-						if (departureDateInput) {
-							const minDate = departureDateInput.min;
-							const selectedDate = departureDateInput.value;
-
-							if (!selectedDate) {
-								messages.push('Silakan pilih tanggal keberangkatan.');
-							} else if (minDate && selectedDate < minDate) {
-								messages.push('Tanggal keberangkatan tidak boleh sebelum hari ini.');
-							}
-						}
-
-						if (passengersSelect && !passengersSelect.value) {
-							messages.push('Silakan pilih jumlah penumpang dewasa.');
-						}
-
-						if (messages.length) {
-							event.preventDefault();
-							renderErrors(messages);
-							return;
-						}
-
-						renderErrors([]);
-					});
-				}
-
-				const placeholderSelects = document.querySelectorAll('[data-placeholder-select]');
-
-				const syncSelectPlaceholder = (select) => {
-					const hasValue = Boolean(select.value);
-					select.classList.toggle('text-slate-700', hasValue);
-					select.classList.toggle('text-slate-400', !hasValue);
-				};
-
-				placeholderSelects.forEach((select) => {
-					syncSelectPlaceholder(select);
-					select.addEventListener('change', () => syncSelectPlaceholder(select));
-					select.addEventListener('blur', () => syncSelectPlaceholder(select));
-				});
-
-				if (departureDateInput) {
-					const minDate = departureDateInput.min;
-					const enforceMinDate = () => {
-						if (!minDate) {
-							return;
-						}
-
-						if (departureDateInput.value && departureDateInput.value < minDate) {
-							departureDateInput.value = minDate;
-						}
-					};
-
-					enforceMinDate();
-					departureDateInput.addEventListener('change', enforceMinDate);
-				}
-			});
-		</script>
+		<script src="{{ asset('js/home.js') }}" defer></script>
 	</body>
 </html>
