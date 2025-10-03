@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="csrf-token" content="{{ csrf_token() }}">
 
 		<title>{{ config('app.name', 'KAIzen') }} &middot; Rekomendasi Rute</title>
 
@@ -15,6 +16,7 @@
 
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
 		<link rel="stylesheet" href="{{ asset('css/routes.css') }}">
+		<link rel="stylesheet" href="{{ asset('css/security.css') }}">
 	</head>
 	<body class="routes-page-body min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-100 text-slate-900 antialiased">
 		<div class="relative flex min-h-screen flex-col">
@@ -252,6 +254,9 @@
 				</section>
 			</main>
 		</div>
+	@include('partials.behavior-guard')
+
 	<script src="{{ asset('js/routes.js') }}" defer></script>
+	<script src="{{ asset('js/behavior-monitor.js') }}" defer></script>
 	</body>
 </html>

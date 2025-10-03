@@ -40,16 +40,11 @@
 		</div>
 		<div class="hidden items-center gap-3 lg:flex">
 			<a
-				href="#signin"
-				class="rounded-full border border-indigo-100 px-5 py-2 text-sm font-medium text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700"
+				href="#profile"
+				class="inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 border-indigo-100 bg-white shadow-sm transition hover:border-indigo-300"
+				aria-label="Profil pengguna"
 			>
-				Sign In
-			</a>
-			<a
-				href="#register"
-				class="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white transition hover:from-indigo-600 hover:to-purple-600"
-			>
-				Register
+				<img src="https://i.pravatar.cc/80?img=32" alt="User avatar" class="h-full w-full object-cover" />
 			</a>
 		</div>
 	</nav>

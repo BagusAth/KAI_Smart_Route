@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="csrf-token" content="{{ csrf_token() }}">
 
 		<title>{{ config('app.name', 'KAIzen') }}</title>
 
@@ -15,6 +16,7 @@
 
 		@vite(['resources/css/app.css', 'resources/js/app.js'])
 		<link rel="stylesheet" href="{{ asset('css/home.css') }}">
+		<link rel="stylesheet" href="{{ asset('css/security.css') }}">
 	</head>
 	<body class="home-page-body" data-stations='@json($stationOptions ?? [], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)'>
 		<div class="home-page-container">
@@ -39,6 +41,7 @@
 								action="{{ route('routes.recommend') }}"
 								method="POST"
 								class="search-card search-card-grid-lg grid gap-4 border border-indigo-100 bg-white p-6 sm:grid-cols-2 lg:grid-cols-5"
+								data-behavior-protected
 							>
 								@csrf
 
@@ -361,6 +364,9 @@
 			</div>
 		</div>
 
+		@include('partials.behavior-guard')
+
 		<script src="{{ asset('js/home.js') }}" defer></script>
+		<script src="{{ asset('js/behavior-monitor.js') }}" defer></script>
 	</body>
 </html>

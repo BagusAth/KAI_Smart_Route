@@ -1,0 +1,34 @@
+{
+  "mouseSpeed": {
+    "min": 50,
+    "max": 572
+  },
+  "mouseJitter": {
+    "min": 0.2,
+    "max": 0.99
+  },
+  "typingSpeed": {
+    "min": 10,
+    "max": 137.5
+  },
+  "typingRhythm": {
+    "min": 0.3,
+    "max": 0.99
+  },
+  "clickFrequency": {
+    "min": 50,
+    "max": 2500
+  },
+  "timeOnPage": {
+    "min": 1000,
+    "max": 25000
+  },
+  "scrollPattern": {
+    "min": 0,
+    "max": 0.5
+  },
+  "mouseAcceleration": {
+    "min": 0,
+    "max": 0.5
+  }
+}

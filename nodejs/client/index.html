@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAI Guard - Anti-Scalper System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Non-TensorFlow implementation -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="img/kai-guard-logo.svg" alt="KAI Guard Logo">
+                <h1>KAI Guard</h1>
+            </div>
+            <p class="tagline">Sistem Cerdas Anti-Calo Berbasis Analisis Perilaku</p>
+        </header>
+
+        <main>
+            <section class="demo-section">
+                <h2>Simulasi Pembelian Tiket</h2>
+                <p>Silakan isi form berikut untuk mensimulasikan proses pembelian tiket kereta api.</p>
+                
+                <div class="trust-score-indicator">
+                    <div class="score-label">Trust Score:</div>
+                    <div class="score-value" id="trustScore">Menunggu...</div>
+                    <div class="score-bar">
+                        <div class="score-fill" id="trustScoreFill"></div>
+                    </div>
+                </div>
+
+                <div class="status-message" id="statusMessage"></div>
+                
+                <form id="ticketForm">
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nik">Nomor Identitas (NIK)</label>
+                        <input type="text" id="nik" name="nik" required pattern="[0-9]{16}" maxlength="16">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="origin">Stasiun Asal</label>
+                            <select id="origin" name="origin" required>
+                                <option value="">Pilih Stasiun</option>
+                                <option value="GMR">Gambir (GMR)</option>
+                                <option value="BD">Bandung (BD)</option>
+                                <option value="YK">Yogyakarta (YK)</option>
+                                <option value="SBI">Surabaya (SBI)</option>
+                                <option value="MLG">Malang (MLG)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="destination">Stasiun Tujuan</label>
+                            <select id="destination" name="destination" required>
+                                <option value="">Pilih Stasiun</option>
+                                <option value="GMR">Gambir (GMR)</option>
+                                <option value="BD">Bandung (BD)</option>
+                                <option value="YK">Yogyakarta (YK)</option>
+                                <option value="SBI">Surabaya (SBI)</option>
+                                <option value="MLG">Malang (MLG)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Tanggal Keberangkatan</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="passengers">Jumlah Penumpang</label>
+                            <select id="passengers" name="passengers" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" id="searchButton">Cari Tiket</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="info-section">
+                <h2>Tentang KAI Guard</h2>
+                <p>KAI Guard adalah sistem cerdas yang menggunakan teknologi analisis perilaku untuk membedakan pengguna manusia dari bot calo. Sistem ini menganalisis pola interaksi Anda dengan halaman web secara real-time untuk memastikan proses pembelian tiket yang adil.</p>
+                
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">🖱️</div>
+                        <h3>Analisis Gerakan Mouse</h3>
+                        <p>Menganalisis pola gerakan mouse yang alami vs. otomatis</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">⌨️</div>
+                        <h3>Pola Pengetikan</h3>
+                        <p>Mempelajari ritme pengetikan manusia yang unik</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">📱</div>
+                        <h3>Identifikasi Perangkat</h3>
+                        <p>Mengenali karakteristik perangkat pengguna yang sah</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2023 KAI Guard - Proyek Hackathon</p>
+        </footer>
+    </div>
+
+    <!-- Modal for challenge or block messages -->
+    <div class="modal" id="actionModal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModal">&times;</span>
+            <h2 id="modalTitle">Verifikasi Tambahan</h2>
+            <p id="modalMessage"></p>
+            <div id="challengeContent" class="challenge-content">
+                <!-- Challenge content will be inserted here -->
+            </div>
+            <div class="modal-actions">
+                <button id="modalPrimaryButton">Verifikasi</button>
+                <button id="modalSecondaryButton">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/behaviorCollector.js"></script>
+    <script src="js/clientModelServiceNonTF.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
