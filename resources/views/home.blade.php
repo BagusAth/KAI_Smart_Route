@@ -17,75 +17,10 @@
 	</head>
 	<body class="min-h-screen bg-white text-slate-900 antialiased">
 		<div class="flex min-h-screen flex-col">
-			<header class="sticky top-0 z-50 border-b border-slate-100 bg-white">
-					<nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
-						<a href="#" class="text-2xl font-semibold tracking-tight text-indigo-600">
-							RailLink
-						</a>
-						<div class="flex items-center gap-2 lg:hidden">
-							<a
-								href="#signin"
-								class="rounded-full border border-indigo-200 px-4 py-1.5 text-sm font-medium text-indigo-600 transition hover:border-indigo-400 hover:text-indigo-700"
-							>
-								Sign In
-							</a>
-							<button
-								type="button"
-								class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-indigo-200 text-indigo-600 transition hover:border-indigo-400 hover:text-indigo-700"
-								aria-label="Toggle navigation"
-								data-menu-button
-							>
-								<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
-								</svg>
-							</button>
-						</div>
-						<div class="hidden items-center gap-10 text-sm font-medium text-slate-700 lg:flex">
-							<a href="#home" class="transition hover:text-indigo-600">Home</a>
-							<a href="#trains" class="transition hover:text-indigo-600">Trains</a>
-							<a href="#promos" class="transition hover:text-indigo-600">Promos</a>
-							<a href="#contact" class="transition hover:text-indigo-600">Contact Us</a>
-						</div>
-						<div class="hidden items-center gap-3 lg:flex">
-							<a
-								href="#signin"
-								class="rounded-full border border-indigo-100 px-5 py-2 text-sm font-medium text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700"
-							>
-								Sign In
-							</a>
-							<a
-								href="#register"
-								class="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white transition hover:from-indigo-600 hover:to-purple-600"
-							>
-								Register
-							</a>
-						</div>
-					</nav>
-					<div class="mx-auto hidden max-w-6xl px-6 pb-6 lg:hidden" id="mobile-menu" data-menu-panel>
-						<div class="rounded-2xl border border-slate-100 bg-white p-6">
-							<div class="grid gap-4 text-sm font-medium text-slate-700">
-								<a href="#home" class="rounded-xl px-3 py-2 transition hover:bg-indigo-50 hover:text-indigo-600">Home</a>
-								<a href="#trains" class="rounded-xl px-3 py-2 transition hover:bg-indigo-50 hover:text-indigo-600">Trains</a>
-								<a href="#promos" class="rounded-xl px-3 py-2 transition hover:bg-indigo-50 hover:text-indigo-600">Promos</a>
-								<a href="#contact" class="rounded-xl px-3 py-2 transition hover:bg-indigo-50 hover:text-indigo-600">Contact Us</a>
-							</div>
-							<div class="mt-6 flex flex-col gap-3">
-								<a
-									href="#signin"
-									class="rounded-full border border-indigo-100 px-4 py-2 text-center text-sm font-medium text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700"
-								>
-									Sign In
-								</a>
-								<a
-									href="#register"
-									class="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-2 text-center text-sm font-semibold text-white transition hover:from-indigo-600 hover:to-purple-600"
-								>
-									Register
-								</a>
-							</div>
-						</div>
-					</div>
-				</header>
+			@include('header', [
+				'headerClasses' => 'sticky top-0 z-50 border-b border-slate-100 bg-white',
+				'navClasses' => 'mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8',
+			])
 
 				<main class="flex-1">
 					<section id="home" class="relative flex h-[calc(100vh-88px)] w-full items-end bg-white">

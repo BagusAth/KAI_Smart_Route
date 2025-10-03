@@ -18,33 +18,10 @@
 	<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-100 text-slate-900 antialiased">
 		<div class="relative flex min-h-screen flex-col">
 			<div class="pointer-events-none absolute inset-x-0 top-0 z-0 h-72 bg-gradient-to-b from-indigo-200/60 via-white to-transparent blur-2xl"></div>
-			<header class="relative z-10 border-b border-white/40 bg-white/70 backdrop-blur">
-				<nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
-					<a href="{{ route('home') }}" class="text-2xl font-semibold tracking-tight text-indigo-600">
-						RailLink
-					</a>
-					<div class="hidden items-center gap-10 text-sm font-medium text-slate-600 lg:flex">
-						<a href="{{ route('home') }}#home" class="transition hover:text-indigo-600">Home</a>
-						<a href="{{ route('home') }}#trains" class="text-indigo-600 transition">Train</a>
-						<a href="#promos" class="transition hover:text-indigo-600">Promo</a>
-						<a href="#contact" class="transition hover:text-indigo-600">Contact Us</a>
-					</div>
-					<div class="hidden items-center gap-3 lg:flex">
-						<a
-							href="#signin"
-							class="rounded-full border border-indigo-200 px-5 py-2 text-sm font-medium text-indigo-600 transition hover:border-indigo-400 hover:text-indigo-700"
-						>
-							Sign In
-						</a>
-						<a
-							href="#register"
-							class="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white transition hover:from-indigo-600 hover:to-purple-600"
-						>
-							Register
-						</a>
-					</div>
-				</nav>
-			</header>
+			@include('header', [
+				'headerClasses' => 'sticky top-0 z-50 border-b border-white/40 bg-white/80 backdrop-blur',
+				'navClasses' => 'mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8 text-slate-600',
+			])
 
 			<main class="relative z-10 flex-1">
 				<section class="mx-auto max-w-6xl px-6 py-12 lg:px-8 lg:py-16">
