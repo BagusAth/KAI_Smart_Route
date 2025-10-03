@@ -172,9 +172,9 @@
 					<section id="popular-routes" class="home-popular-section">
 						<div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 text-center lg:px-8">
 							<div class="space-y-4">
-								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Discover the most popular train routes chosen by passengers every day.</h2>
+								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">MOST POPULAR ROUTES</h2>
 								<p class="mx-auto max-w-2xl text-sm text-slate-600 sm:text-base">
-									Temukan inspirasi perjalanan dari rute terfavorit dengan jadwal terbaik dan pengalaman paling nyaman setiap hari.
+									Discover the most popular routes with the best schedules and most comfortable experiences every day.
 								</p>
 							</div>
 							@php
@@ -245,7 +245,7 @@
 						<div class="mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 text-center lg:px-8">
 							<div class="space-y-4">
 								<h2 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">TRAINS</h2>
-								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train.</p>
+								<p class="text-sm text-slate-600 sm:text-base">Discover the most popular train chosen by passengers every day.</p>
 							</div>
 							<div class="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-5">
 								@php
