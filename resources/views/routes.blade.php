@@ -26,6 +26,14 @@
 
 			<main class="relative z-10 flex-1">
 				<section class="mx-auto max-w-6xl px-6 py-12 lg:px-8 lg:py-16">
+					@php
+						$timeOptions = [];
+						for ($hour = 0; $hour < 24; $hour++) {
+							foreach ([0, 30] as $minute) {
+								$timeOptions[] = sprintf('%02d:%02d', $hour, $minute);
+							}
+						}
+					@endphp
 					<div class="flex flex-col gap-3">
 						<h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
 							{{ $searchSummary['title'] ?? 'Rute Terpilih' }}
@@ -46,13 +54,13 @@
 						</div>
 					</div>
 
-					<div class="mt-8 flex flex-wrap gap-3">
+					<div class="mt-8 flex flex-wrap items-center gap-3">
 						@foreach ($dateOptions as $option)
 							<button
 								type="button"
 								class="date-option-button inline-flex items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition focus:outline-none focus:ring-4 focus:ring-indigo-200/60 {{ $option['is_active'] ? 'is-active' : '' }}"
 								data-date-option
-								data-date-value="{{ $option['date'] }}"
+								data-date-value="{{ $option['value'] }}"
 								data-date-day="{{ $option['day'] }}"
 								aria-pressed="{{ $option['is_active'] ? 'true' : 'false' }}"
 							>
@@ -60,9 +68,54 @@
 								<span class="text-xs font-medium uppercase tracking-wide">{{ $option['date'] }}</span>
 							</button>
 						@endforeach
+
+							<div class="route-filter relative" data-filter-root>
+								<button
+									type="button"
+									class="route-filter-trigger inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+									data-filter-toggle
+									aria-expanded="false"
+								>
+									<svg class="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M7 12h10M10 18h4" />
+									</svg>
+									<span>Filter</span>
+								</button>
+								<div class="route-filter-dropdown hidden" data-filter-dropdown>
+									<div class="route-filter-header">
+										<p class="route-filter-title">Jam</p>
+										<p class="route-filter-subtitle">Pilih rentang jam keberangkatan yang diinginkan.</p>
+									</div>
+									<div class="route-filter-fields">
+										<label class="route-filter-field">
+											<span>Jam mulai</span>
+											<select class="route-filter-select" data-filter-start>
+												<option value="">Semua jam</option>
+												@foreach ($timeOptions as $time)
+													<option value="{{ $time }}">{{ $time }}</option>
+												@endforeach
+											</select>
+										</label>
+										<label class="route-filter-field">
+											<span>Jam selesai</span>
+											<select class="route-filter-select" data-filter-end>
+												<option value="">Semua jam</option>
+												@foreach ($timeOptions as $time)
+													<option value="{{ $time }}">{{ $time }}</option>
+												@endforeach
+											</select>
+										</label>
+									</div>
+									<p class="route-filter-error hidden" data-filter-error></p>
+									<div class="route-filter-actions">
+										<button type="button" class="route-filter-reset" data-filter-reset>Reset</button>
+										<button type="button" class="route-filter-apply" data-filter-apply>Terapkan</button>
+									</div>
+								</div>
+							</div>
 					</div>
 
-					<div class="mt-12 space-y-8">
+						<div class="mt-12 space-y-8" data-route-card-container>
 						@foreach ($recommendations as $recommendation)
 							@php
 								$legs = $recommendation['legs'] ?? [];
@@ -104,9 +157,15 @@
 										return $node;
 									})
 									->all();
+
+								$firstDeparture = $legs[0]['departure']['time'] ?? null;
 							@endphp
 
-							<article class="route-card border border-indigo-100 bg-white/90 p-8 backdrop-blur transition duration-500">
+							<article
+								class="route-card border border-indigo-100 bg-white/90 p-8 backdrop-blur transition duration-500"
+								data-route-card
+								data-departure-time="{{ $firstDeparture }}"
+							>
 								<div class="flex flex-wrap items-start justify-between gap-6">
 									<div>
 										<p class="route-card-label text-sm font-semibold uppercase text-indigo-500">{{ $recommendation['title'] ?? 'Rekomendasi Rute' }}</p>
@@ -188,6 +247,7 @@
 								</div>
 							</article>
 						@endforeach
+						<button type="button" class="route-empty-message hidden" data-filter-empty>Connecting Train</button>
 					</div>
 				</section>
 			</main>
