@@ -317,46 +317,59 @@
 										[
 											'name' => 'KA Progo',
 											'image' => 'https://images.unsplash.com/photo-1527295110-5145f6b148d0?q=80&w=1131&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'code' => 'KA-PRO',
+											'class' => 'Ekonomi',
 											'badge' => null,
 											'color' => 'bg-indigo-500'
 										],
 										[
 											'name' => 'KA Kertajaya',
 											'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1284&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'code' => 'KA-KER',
+											'class' => 'Ekonomi',
 											'badge' => null,
 											'color' => 'bg-blue-600'
 										],
 										[
 											'name' => 'KA Menoreh',
 											'image' => 'https://images.unsplash.com/photo-1601999007938-f584b47324ac?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'code' => 'KA-MEN',
+											'class' => 'Eksekutif',
 											'badge' => 'Explore',
 											'color' => 'bg-slate-900'
 										],
 										[
 											'name' => 'KA Harina',
 											'image' => 'https://images.unsplash.com/photo-1514337224818-9787cf717f2a?q=80&w=1331&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'code' => 'KA-HAR',
+											'class' => 'Bisnis',
 											'badge' => null,
 											'color' => 'bg-orange-500'
 										],
 										[
 											'name' => 'KA Ambarawa',
 											'image' => 'https://images.unsplash.com/flagged/photo-1550719723-8602e87f2dc8?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+											'code' => 'KA-AMB',
+											'class' => 'Pariwisata',
 											'badge' => null,
 											'color' => 'bg-amber-500'
 										],
 									];
 								@endphp
 
-								@foreach ($trains as $train)
+								@forelse ($trains as $train)
 									<article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_28px_60px_rgba(15,23,42,0.16)]">
 										<div class="relative h-48 w-full overflow-hidden">
 											<img src="{{ $train['image'] }}" alt="{{ $train['name'] }}" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-											<span class="absolute right-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['class'] }}</span>
+											@if (!empty($train['badge']))
+												<span class="absolute left-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['badge'] }}</span>
+											@endif
+											<span class="absolute right-3 top-3 inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">{{ $train['class'] ?? 'Kelas' }}</span>
 										</div>
 										<div class="flex flex-1 items-center justify-between px-4 py-4">
 											<h3 class="text-sm font-semibold text-slate-800">{{ $train['name'] }}</h3>
-											<span class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-full px-3 text-xs font-semibold text-white {{ $train['color'] }}">
-												{{ $train['code'] }}
+											<span class="inline-flex h-8 min-w-[3rem] items-center justify-center rounded-full px-3 text-xs font-semibold text-white {{ $train['color'] ?? 'bg-indigo-500' }}">
+												{{ $train['code'] ?? 'KA' }}
 											</span>
 										</div>
 									</article>
