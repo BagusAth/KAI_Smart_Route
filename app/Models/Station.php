@@ -13,7 +13,8 @@ class Station extends Model
         'code',
         'name',
         'city',
-        'island',
+    'island',
+        'location',
     ];
 
     public function departures()
@@ -24,5 +25,30 @@ class Station extends Model
     public function routes()
     {
         return $this->hasMany(Route::class);
+    }
+
+    public function platforms()
+    {
+        return $this->hasMany(Platform::class);
+    }
+
+    public function outgoingConnections()
+    {
+        return $this->hasMany(Track::class, 'station_a_id');
+    }
+
+    public function incomingConnections()
+    {
+        return $this->hasMany(Track::class, 'station_b_id');
+    }
+
+    public function poiTransfers()
+    {
+        return $this->hasMany(PoiStationTransfer::class);
+    }
+
+    public function defaultForPointsOfInterest()
+    {
+        return $this->hasMany(PointOfInterest::class, 'default_station_id');
     }
 }

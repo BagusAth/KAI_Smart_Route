@@ -100,40 +100,116 @@
 						<div class="mx-auto max-w-5xl px-6 lg:px-8">
 							<form
 								id="search-form"
+								action="{{ route('routes.recommend') }}"
+								method="POST"
 								class="grid gap-4 rounded-[32px] border border-indigo-100 bg-white p-6 shadow-[0_24px_64px_rgba(79,70,229,0.16)] sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto]"
 							>
+								@csrf
+
+								@if (session('status'))
+									<div class="col-span-full rounded-2xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-sm text-indigo-700">
+										{{ session('status') }}
+									</div>
+								@endif
+
+								@if ($errors->any())
+									<div class="col-span-full rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+										<ul class="space-y-1">
+											@foreach ($errors->all() as $error)
+												<li>{{ $error }}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
+								<div class="col-span-full hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600" id="form-errors-wrapper">
+									<ul class="space-y-1" id="form-errors"></ul>
+								</div>
+
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">From</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>Semarang</option>
-										<option>Yogyakarta</option>
-										<option>Surabaya</option>
-									</select>
+									<div class="relative">
+										<input
+											type="text"
+											name="origin_label"
+											id="origin-display"
+											autocomplete="off"
+											list="origin-stations"
+											value="{{ old('origin_label') }}"
+											placeholder="Cari stasiun keberangkatan"
+											class="peer w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+											required
+										/>
+										<input type="hidden" name="origin" id="origin" value="{{ old('origin') }}">
+										<datalist id="origin-stations">
+											@foreach ($stationOptions ?? [] as $station)
+												<option value="{{ $station['label'] }}" data-code="{{ $station['code'] }}">{{ $station['code'] }} &middot; {{ $station['city'] }}</option>
+											@endforeach
+										</datalist>
+										<span class="pointer-events-none absolute inset-y-0 right-4 hidden items-center text-indigo-500 peer-focus:flex">
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+											</svg>
+										</span>
+									</div>
 								</label>
+
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">To</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>Semarang</option>
-										<option>Jakarta</option>
-										<option>Bandung</option>
-									</select>
+									<div class="relative">
+										<input
+											type="text"
+											name="destination_label"
+											id="destination-display"
+											autocomplete="off"
+											list="destination-stations"
+											value="{{ old('destination_label') }}"
+											placeholder="Cari stasiun tujuan"
+											class="peer w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+											required
+										/>
+										<input type="hidden" name="destination" id="destination" value="{{ old('destination') }}">
+										<datalist id="destination-stations">
+											@foreach ($stationOptions ?? [] as $station)
+												<option value="{{ $station['label'] }}" data-code="{{ $station['code'] }}">{{ $station['code'] }} &middot; {{ $station['city'] }}</option>
+											@endforeach
+										</datalist>
+										<span class="pointer-events-none absolute inset-y-0 right-4 hidden items-center text-indigo-500 peer-focus:flex">
+											<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+											</svg>
+										</span>
+									</div>
 								</label>
+
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">From</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>20:00</option>
-										<option>21:00</option>
-										<option>22:00</option>
+									<select
+										name="start_time"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										required
+									>
+										<option value="" disabled {{ old('start_time') ? '' : 'selected' }}>Pilih jam mulai</option>
+										@foreach (($timeOptions ?? []) as $timeOption)
+											<option value="{{ $timeOption }}" {{ old('start_time') === $timeOption ? 'selected' : '' }}>{{ $timeOption }}</option>
+										@endforeach
 									</select>
 								</label>
+
 								<label class="space-y-2 text-left">
 									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">To</span>
-									<select class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60">
-										<option>00:00</option>
-										<option>01:00</option>
-										<option>02:00</option>
+									<select
+										name="end_time"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										required
+									>
+										<option value="" disabled {{ old('end_time') ? '' : 'selected' }}>Pilih jam akhir</option>
+										@foreach (($timeOptions ?? []) as $timeOption)
+											<option value="{{ $timeOption }}" {{ old('end_time') === $timeOption ? 'selected' : '' }}>{{ $timeOption }}</option>
+										@endforeach
 									</select>
 								</label>
+
 								<button
 									type="submit"
 									class="hidden h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white transition hover:from-indigo-600 hover:to-purple-600 lg:flex"
@@ -151,8 +227,8 @@
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-4.35-4.35m1.85-4.15a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
 									</svg>
 									Cari Kereta
-								</button>
-							</form>
+							</button>
+						</form>
 						</div>
 					</section>
 
@@ -268,6 +344,13 @@
 				const menuButton = document.querySelector('[data-menu-button]');
 				const menuPanel = document.querySelector('[data-menu-panel]');
 				const searchForm = document.getElementById('search-form');
+				const originInput = document.getElementById('origin-display');
+				const destinationInput = document.getElementById('destination-display');
+				const originHidden = document.getElementById('origin');
+				const destinationHidden = document.getElementById('destination');
+				const stationOptions = @json($stationOptions ?? []);
+				const formErrorsWrapper = document.getElementById('form-errors-wrapper');
+				const formErrorsList = document.getElementById('form-errors');
 
 				if (menuButton && menuPanel) {
 					menuButton.addEventListener('click', () => {
@@ -277,23 +360,84 @@
 					});
 				}
 
+				const findStationByLabel = (value) => {
+					if (!value) {
+						return null;
+					}
+
+					const normalized = value.trim().toLowerCase();
+					return stationOptions.find((station) => {
+						return station.label.toLowerCase() === normalized
+							|| station.name.toLowerCase() === normalized
+							|| station.code.toLowerCase() === normalized;
+					});
+				};
+
+				const syncStationValue = (input, hidden) => {
+					const match = findStationByLabel(input.value);
+					hidden.value = match ? match.code : '';
+				};
+
+				if (originInput && originHidden) {
+					['input', 'change', 'blur'].forEach((eventName) => {
+						originInput.addEventListener(eventName, () => syncStationValue(originInput, originHidden));
+					});
+					syncStationValue(originInput, originHidden);
+				}
+
+				if (destinationInput && destinationHidden) {
+					['input', 'change', 'blur'].forEach((eventName) => {
+						destinationInput.addEventListener(eventName, () => syncStationValue(destinationInput, destinationHidden));
+					});
+					syncStationValue(destinationInput, destinationHidden);
+				}
+
+				const renderErrors = (messages) => {
+					if (!formErrorsWrapper || !formErrorsList) {
+						return;
+					}
+
+					formErrorsList.innerHTML = '';
+					if (!messages.length) {
+						formErrorsWrapper.classList.add('hidden');
+						return;
+					}
+
+					messages.forEach((message) => {
+						const li = document.createElement('li');
+						li.textContent = message;
+						formErrorsList.appendChild(li);
+					});
+
+					formErrorsWrapper.classList.remove('hidden');
+				};
+
 				if (searchForm) {
 					searchForm.addEventListener('submit', (event) => {
-						event.preventDefault();
-						const button = searchForm.querySelector('button[type="submit"]');
-						if (!button) {
+						syncStationValue(originInput, originHidden);
+						syncStationValue(destinationInput, destinationHidden);
+
+						const messages = [];
+
+						if (!originHidden.value) {
+							messages.push('Silakan pilih stasiun keberangkatan yang valid.');
+						}
+
+						if (!destinationHidden.value) {
+							messages.push('Silakan pilih stasiun tujuan yang valid.');
+						}
+
+						if (originHidden.value && destinationHidden.value && originHidden.value === destinationHidden.value) {
+							messages.push('Stasiun keberangkatan dan tujuan tidak boleh sama.');
+						}
+
+						if (messages.length) {
+							event.preventDefault();
+							renderErrors(messages);
 							return;
 						}
 
-						button.classList.add('scale-[103%]');
-						button.classList.add('ring-4');
-						button.classList.add('ring-indigo-200/70');
-
-						setTimeout(() => {
-							button.classList.remove('scale-[103%]');
-							button.classList.remove('ring-4');
-							button.classList.remove('ring-indigo-200/70');
-						}, 320);
+						renderErrors([]);
 					});
 				}
 			});

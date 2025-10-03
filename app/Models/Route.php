@@ -13,6 +13,11 @@ class Route extends Model
         'train_id',
         'station_id',
         'stop_order',
+        'platform_id',
+        'arrival_offset_minutes',
+        'departure_offset_minutes',
+        'stop_duration_minutes',
+        'notes',
     ];
 
     public function train()
@@ -23,5 +28,10 @@ class Route extends Model
     public function station()
     {
         return $this->belongsTo(Station::class);
+    }
+
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class);
     }
 }
