@@ -6,4 +6,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
+Route::get('/routes/recommendations', RouteRecommendationController::class)->name('routes.recommend.show');
 Route::post('/routes/recommendations', RouteRecommendationController::class)->name('routes.recommend');

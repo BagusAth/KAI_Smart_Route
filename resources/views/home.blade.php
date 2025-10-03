@@ -183,31 +183,30 @@
 								</label>
 
 								<label class="space-y-2 text-left">
-									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">From</span>
-									<select
-										name="start_time"
+									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tanggal Keberangkatan</span>
+									<input
+										type="date"
+										name="departure_date"
+										id="departure-date"
+										min="{{ $departureDateMin ?? now()->format('Y-m-d') }}"
+										value="{{ old('departure_date', $departureDateMin ?? now()->format('Y-m-d')) }}"
 										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
-										data-placeholder-select
 										required
-									>
-										<option value="" disabled {{ old('start_time') ? '' : 'selected' }}>Pilih jam mulai</option>
-										@foreach (($timeOptions ?? []) as $timeOption)
-											<option value="{{ $timeOption }}" {{ old('start_time') === $timeOption ? 'selected' : '' }}>{{ $timeOption }}</option>
-										@endforeach
-									</select>
+									/>
 								</label>
 
 								<label class="space-y-2 text-left">
-									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">To</span>
+									<span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Penumpang Dewasa</span>
 									<select
-										name="end_time"
-										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-700 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
+										name="passengers"
+										id="passengers"
+										class="w-full rounded-2xl border-2 border-indigo-100 px-4 py-3 text-sm font-medium text-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-200/60"
 										data-placeholder-select
 										required
 									>
-										<option value="" disabled {{ old('end_time') ? '' : 'selected' }}>Pilih jam akhir</option>
-										@foreach (($timeOptions ?? []) as $timeOption)
-											<option value="{{ $timeOption }}" {{ old('end_time') === $timeOption ? 'selected' : '' }}>{{ $timeOption }}</option>
+										<option value="" disabled {{ old('passengers') ? '' : 'selected' }}>Pilih jumlah penumpang</option>
+										@foreach (($passengerOptions ?? []) as $option)
+											<option value="{{ $option }}" {{ (string) old('passengers') === (string) $option ? 'selected' : '' }}>{{ $option }} Dewasa</option>
 										@endforeach
 									</select>
 								</label>
@@ -422,6 +421,8 @@
 				const destinationInput = document.getElementById('destination-display');
 				const originHidden = document.getElementById('origin');
 				const destinationHidden = document.getElementById('destination');
+				const departureDateInput = document.getElementById('departure-date');
+				const passengersSelect = document.getElementById('passengers');
 				const stationOptions = @json($stationOptions ?? []);
 				const formErrorsWrapper = document.getElementById('form-errors-wrapper');
 				const formErrorsList = document.getElementById('form-errors');
@@ -505,6 +506,21 @@
 							messages.push('Stasiun keberangkatan dan tujuan tidak boleh sama.');
 						}
 
+						if (departureDateInput) {
+							const minDate = departureDateInput.min;
+							const selectedDate = departureDateInput.value;
+
+							if (!selectedDate) {
+								messages.push('Silakan pilih tanggal keberangkatan.');
+							} else if (minDate && selectedDate < minDate) {
+								messages.push('Tanggal keberangkatan tidak boleh sebelum hari ini.');
+							}
+						}
+
+						if (passengersSelect && !passengersSelect.value) {
+							messages.push('Silakan pilih jumlah penumpang dewasa.');
+						}
+
 						if (messages.length) {
 							event.preventDefault();
 							renderErrors(messages);
@@ -528,6 +544,22 @@
 					select.addEventListener('change', () => syncSelectPlaceholder(select));
 					select.addEventListener('blur', () => syncSelectPlaceholder(select));
 				});
+
+				if (departureDateInput) {
+					const minDate = departureDateInput.min;
+					const enforceMinDate = () => {
+						if (!minDate) {
+							return;
+						}
+
+						if (departureDateInput.value && departureDateInput.value < minDate) {
+							departureDateInput.value = minDate;
+						}
+					};
+
+					enforceMinDate();
+					departureDateInput.addEventListener('change', enforceMinDate);
+				}
 			});
 		</script>
 	</body>

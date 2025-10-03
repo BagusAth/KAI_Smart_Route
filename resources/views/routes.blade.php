@@ -55,9 +55,9 @@
 						<div class="flex flex-wrap items-center gap-3 text-sm text-slate-500">
 							<span class="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 font-medium text-slate-600 shadow-sm">
 								<svg class="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4 4 4-4m-4 4V3" />
+									<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 4.5v-1.5m10.5 1.5v-1.5M4.5 7.5h15m-13.5 3h12a1.5 1.5 0 011.5 1.5v7.5a1.5 1.5 0 01-1.5 1.5h-12a1.5 1.5 0 01-1.5-1.5V12a1.5 1.5 0 011.5-1.5z" />
 								</svg>
-								{{ $searchSummary['time_window'] ?? '' }}
+								{{ $searchSummary['departure_date'] ?? '' }}
 							</span>
 							<span class="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 font-medium text-slate-600 shadow-sm">
 								<svg class="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">

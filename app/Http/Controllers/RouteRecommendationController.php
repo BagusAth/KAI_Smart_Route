@@ -5,21 +5,33 @@ namespace App\Http\Controllers;
 use App\Models\Station;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class RouteRecommendationController extends Controller
 {
-    public function __invoke(Request $request): View
+    private const SESSION_KEY = 'route_recommendations_payload';
+
+    public function __invoke(Request $request): View|RedirectResponse
     {
+        if ($request->isMethod('get')) {
+            $payload = $request->session()->get(self::SESSION_KEY);
+
+            if (!$payload) {
+                return redirect()->route('home')->with('status', 'Silakan lakukan pencarian rute terlebih dahulu.');
+            }
+
+            return view('routes', $payload);
+        }
+
         $validated = $request->validate(
             [
                 'origin' => ['required', 'string', 'max:10'],
                 'origin_label' => ['required', 'string', 'max:255'],
                 'destination' => ['required', 'string', 'max:10'],
                 'destination_label' => ['required', 'string', 'max:255'],
-                'start_time' => ['required', 'string', Rule::in($this->timeOptions())],
-                'end_time' => ['required', 'string', Rule::in($this->timeOptions())],
+                'departure_date' => ['required', 'date', 'after_or_equal:today'],
+                'passengers' => ['required', 'integer', 'min:1', 'max:10'],
             ],
             [],
             [
@@ -27,8 +39,8 @@ class RouteRecommendationController extends Controller
                 'origin_label' => 'nama stasiun keberangkatan',
                 'destination' => 'stasiun tujuan',
                 'destination_label' => 'nama stasiun tujuan',
-                'start_time' => 'jam mulai',
-                'end_time' => 'jam akhir',
+                'departure_date' => 'tanggal keberangkatan',
+                'passengers' => 'jumlah penumpang dewasa',
             ]
         );
 
@@ -38,52 +50,55 @@ class RouteRecommendationController extends Controller
         $originName = $originStation?->name ?? $validated['origin_label'];
         $destinationName = $destinationStation?->name ?? $validated['destination_label'];
 
-        $today = Carbon::now();
-        $dateOptions = $this->buildDateOptions($today);
+    $selectedDate = Carbon::parse($validated['departure_date'])->startOfDay();
+    $today = Carbon::now()->startOfDay();
+    $baseDate = $selectedDate->greaterThan($today) ? $selectedDate : $today;
+    $dateOptions = $this->buildDateOptions($baseDate, $selectedDate);
 
         $recommendations = $this->buildSampleRecommendations($originName, $destinationName);
 
-        return view('routes', [
+        $viewData = [
             'searchSummary' => [
                 'title' => sprintf('%s - %s', $originName, $destinationName),
-                'passengers' => '1 Dewasa',
-                'time_window' => sprintf('%s - %s', $validated['start_time'], $validated['end_time']),
+                'passengers' => sprintf('%d Dewasa', $validated['passengers']),
+                'departure_date' => $this->formatIndonesianDate($selectedDate),
             ],
             'dateOptions' => $dateOptions,
             'recommendations' => $recommendations,
-        ]);
-    }
+        ];
 
-    /**
-     * @return array<int, string>
-     */
-    private function timeOptions(): array
-    {
-        return collect(range(0, 23))
-            ->map(fn (int $hour) => str_pad((string) $hour, 2, '0', STR_PAD_LEFT).':00')
-            ->all();
+        $request->session()->put(self::SESSION_KEY, $viewData);
+
+        return redirect()->route('routes.recommend.show');
     }
 
     /**
      * @return array<int, array{
      *     label: string,
-     *     day: string,
-     *     date: string,
-     *     is_active: bool
+    *     day: string,
+    *     date: string,
+    *     value: string,
+    *     is_active: bool
      * }>
      */
-    private function buildDateOptions(Carbon $startDate): array
+    private function buildDateOptions(Carbon $startDate, Carbon $selectedDate): array
     {
         return collect(range(0, 6))
             ->map(function (int $offset) use ($startDate) {
-                $date = $startDate->copy()->addDays($offset);
+                $date = $startDate->copy()->addDays($offset)->startOfDay();
 
                 return [
                     'label' => $this->formatIndonesianDate($date),
                     'day' => $this->translateDay($date->format('l')),
                     'date' => sprintf('%s %s', $date->format('j'), $this->translateMonthShort($date->format('F'))),
-                    'is_active' => $offset === 0,
+                    'value' => $date->format('Y-m-d'),
+                    'is_active' => false,
                 ];
+            })
+            ->map(function (array $option) use ($selectedDate) {
+                $option['is_active'] = $option['value'] === $selectedDate->format('Y-m-d');
+
+                return $option;
             })
             ->all();
     }
