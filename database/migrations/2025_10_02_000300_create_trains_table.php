@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('code', 20)->unique();
             $table->string('name');
-            $table->enum('type', ['Intercity', 'Commuter Line'])->default('Intercity');
+            $table->string('type')->default('Intercity');
             $table->string('operator')->default('KAI');
             $table->unsignedTinyInteger('total_carriages')->default(8);
             $table->string('class');

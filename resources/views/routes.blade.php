@@ -115,140 +115,75 @@
 							</div>
 					</div>
 
-						<div class="mt-12 space-y-8" data-route-card-container>
-						@foreach ($recommendations as $recommendation)
-							@php
-								$legs = $recommendation['legs'] ?? [];
-								$destinationLabel = $recommendation['destination_label'] ?? 'Tujuan Akhir';
-								$segmentsNodes = collect($legs)
-									->map(fn ($leg) => [
-										'icon' => $leg['mode_icon'] ?? 'train',
-										'label' => $leg['mode_label'] ?? 'Leg',
-										'badge' => $leg['badge_class'] ?? 'from-indigo-500 to-purple-500',
-									])
-									->push([
-										'icon' => 'destination',
-										'label' => 'Tujuan',
-										'badge' => 'destination',
-									])
-									->all();
+						@php
+							$directRecommendations = $directRecommendations ?? [];
+							$multiRecommendations = $multiModalRecommendations ?? ($recommendations ?? []);
+							$hasDirect = !empty($directRecommendations);
+							$hasMulti = !empty($multiRecommendations);
+							$activeGroup = 'direct';
+							$initialToggleLabel = $hasMulti ? 'Lihat koneksi multi-moda' : null;
+							$directToggleLabel = $hasDirect ? 'Lihat kereta langsung' : 'Lihat info kereta langsung';
+						@endphp
 
-								$events = [];
-								if (!empty($legs)) {
-									$firstLeg = $legs[0];
-									$events[] = [
-										'time' => $firstLeg['departure']['time'] ?? '',
-										'station' => $firstLeg['departure']['station'] ?? '',
-										'type' => 'origin',
-									];
-
-									foreach ($legs as $index => $leg) {
-										$events[] = [
-											'time' => $leg['arrival']['time'] ?? '',
-											'station' => $leg['arrival']['station'] ?? '',
-											'type' => $leg['arrival']['type'] ?? ($index === array_key_last($legs) ? 'destination' : 'transfer'),
-										];
-									}
-								}
-
-								$timelineItems = collect($segmentsNodes)
-									->map(function ($node, $index) use ($events) {
-										$node['event'] = $events[$index] ?? null;
-										return $node;
-									})
-									->all();
-
-								$firstDeparture = $legs[0]['departure']['time'] ?? null;
-							@endphp
-
-							<article
-								class="route-card border border-indigo-100 bg-white/90 p-8 backdrop-blur transition duration-500"
-								data-route-card
-								data-departure-time="{{ $firstDeparture }}"
-							>
-								<div class="flex flex-wrap items-start justify-between gap-6">
-									<div>
-										<p class="route-card-label text-sm font-semibold uppercase text-indigo-500">{{ $recommendation['title'] ?? 'Rekomendasi Rute' }}</p>
-										<h2 class="mt-2 text-xl font-semibold text-slate-900">Perjalanan Multi-Moda</h2>
+						<div
+							class="mt-12 space-y-8"
+							data-route-card-container
+							data-active-group="{{ $activeGroup }}"
+							data-reservation-url="{{ route('reservasi') }}"
+							data-search-summary='@json($searchSummary, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)'
+						>
+							<div class="route-cards-group {{ $activeGroup === 'direct' ? 'is-active' : 'hidden' }}" data-route-group="direct">
+								@if ($hasDirect)
+									@foreach ($directRecommendations as $recommendation)
+										@include('components.route-card', [
+											'recommendation' => array_merge($recommendation, [
+												'route_type' => 'direct',
+												'subtitle' => $recommendation['subtitle'] ?? 'Perjalanan Langsung',
+												'badge_caption' => $recommendation['badge_caption'] ?? 'Kereta langsung tanpa transit',
+											]),
+										])
+									@endforeach
+								@else
+									<div class="route-empty-state" data-route-direct-empty>
+										<h3 class="route-empty-state-title">Belum ada kereta langsung</h3>
+										<p class="route-empty-state-description">
+											Kami tidak menemukan perjalanan langsung dari {{ $searchSummary['title'] ?? 'stasiun asal' }} pada tanggal yang dipilih.
+										</p>
+										@if ($hasMulti)
+											<p class="route-empty-state-description">Gunakan tombol di bawah untuk melihat rute multi-moda.</p>
+										@endif
 									</div>
-									<div class="text-right">
-										<span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Harga</span>
-										<p class="mt-1 text-2xl font-bold text-slate-900">Rp {{ number_format($recommendation['price'] ?? 0, 0, ',', '.') }}</p>
-									</div>
+								@endif
+							</div>
+
+							@if ($hasMulti)
+								<div class="route-cards-group {{ $activeGroup === 'multi' ? 'is-active' : 'hidden' }}" data-route-group="multi">
+									@foreach ($multiRecommendations as $recommendation)
+										@include('components.route-card', [
+											'recommendation' => array_merge($recommendation, [
+												'route_type' => 'multi',
+											]),
+										])
+									@endforeach
 								</div>
+							@endif
 
-								<div class="mt-8 space-y-6">
-									<div class="flex w-full flex-col gap-6 sm:flex-row sm:items-start sm:gap-6">
-										@foreach ($timelineItems as $item)
-											@php
-												$isDestination = ($item['icon'] ?? '') === 'destination';
-												$badgeClasses = $isDestination
-													? 'border border-indigo-100 bg-white text-indigo-600'
-													: 'bg-gradient-to-br '.($item['badge'] ?? 'from-indigo-500 to-purple-500').' text-white shadow-lg';
-												$event = $item['event'] ?? null;
-												$eventBulletClass = match ($event['type'] ?? null) {
-													'destination' => 'border-indigo-500 bg-indigo-500',
-													'origin' => 'border-indigo-400 bg-indigo-400',
-													default => 'border-indigo-200 bg-white',
-												};
-											@endphp
-											<div class="flex w-full items-start gap-4 sm:flex-1">
-												<div class="flex flex-col items-center text-center">
-													<span class="flex h-12 w-12 items-center justify-center rounded-full {{ $badgeClasses }}">
-														@if (($item['icon'] ?? '') === 'commuter')
-															<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-																<path stroke-linecap="round" stroke-linejoin="round" d="M8.5 3h7a3.5 3.5 0 013.5 3.5v5.75a3.5 3.5 0 01-3.5 3.5h-7a3.5 3.5 0 01-3.5-3.5V6.5A3.5 3.5 0 018.5 3z" />
-																<path stroke-linecap="round" stroke-linejoin="round" d="M6 17.25h12M7.5 20h2m5 0h2" />
-															</svg>
-														@elseif (($item['icon'] ?? '') === 'train')
-															<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-																<path stroke-linecap="round" stroke-linejoin="round" d="M9 21h6m-9-4h12a2 2 0 002-2V6a5 5 0 00-5-5H8a5 5 0 00-5 5v9a2 2 0 002 2zm0-9h12" />
-															</svg>
-														@else
-															<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-																<path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-6-4.686-6-10a6 6 0 1112 0c0 5.314-6 10-6 10z" />
-																<path stroke-linecap="round" stroke-linejoin="round" d="M12 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-															</svg>
-														@endif
-													</span>
-													<span class="mt-2 text-[10px] font-semibold uppercase tracking-wide {{ $isDestination ? 'text-indigo-500' : 'text-indigo-400' }}">
-														{{ $item['label'] ?? '' }}
-													</span>
-													@if ($event)
-														<div class="mt-6 flex flex-col items-center gap-1">
-															<span class="inline-flex h-3 w-3 items-center justify-center rounded-full border-2 {{ $eventBulletClass }}"></span>
-															<span class="text-sm font-semibold text-slate-900">{{ $event['time'] }}</span>
-															<span class="text-xs text-slate-500">{{ $event['station'] }}</span>
-														</div>
-													@endif
-												</div>
-												@if (!$loop->last)
-													<div class="hidden route-connector route-connector--full flex-1 self-center sm:block"></div>
-													<div class="block route-connector route-connector--short self-center sm:hidden"></div>
-												@endif
-											</div>
-										@endforeach
-									</div>
-								</div>
+							<div class="route-empty-message hidden" data-filter-empty>Tidak ada jadwal untuk rentang waktu yang dipilih.</div>
+						</div>
 
-								<div class="mt-6 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-500">
-									<div class="inline-flex items-center gap-2 rounded-full bg-indigo-50/70 px-4 py-2 text-indigo-600">
-										<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8m-8 4h8m-8 4h5" />
-										</svg>
-										<span>Layanan onboard nyaman & wifi gratis</span>
-									</div>
-									<a href="#" class="inline-flex items-center gap-2 text-indigo-600 transition hover:text-indigo-700">
-										<span>Detail perjalanan</span>
-										<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-										</svg>
-									</a>
-								</div>
-							</article>
-						@endforeach
-						<button type="button" class="route-empty-message hidden" data-filter-empty>Connecting Train</button>
-					</div>
+						@if ($hasMulti)
+							<div class="mt-8 flex justify-center">
+								<button
+									type="button"
+									class="route-connecting-button"
+									data-route-toggle
+									data-label-direct="{{ $directToggleLabel }}"
+									data-label-multi="Lihat koneksi multi-moda"
+								>
+									{{ $initialToggleLabel }}
+								</button>
+							</div>
+						@endif
 				</section>
 			</main>
 		</div>

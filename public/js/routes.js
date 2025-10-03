@@ -67,11 +67,17 @@
 	const applyButton = filterRoot?.querySelector('[data-filter-apply]');
 	const resetButton = filterRoot?.querySelector('[data-filter-reset]');
 	const errorMessage = filterRoot?.querySelector('[data-filter-error]');
-	const routeCards = Array.from(document.querySelectorAll('[data-route-card]'));
+	const cardContainer = document.querySelector('[data-route-card-container]');
+	const reservationUrl = cardContainer?.dataset.reservationUrl || '';
+	const routeGroups = Array.from(cardContainer?.querySelectorAll('[data-route-group]') || []);
+	const selectionStorageKey = 'kaizen:selectedRoute';
+	const modeToggleButton = document.querySelector('[data-route-toggle]');
+	let routeCards = [];
 	const emptyMessage = document.querySelector('[data-filter-empty]');
 	let isDropdownOpen = false;
 
 	const hiddenClass = 'hidden';
+const expandedClass = 'is-expanded';
 
 	const sanitizeTime = (value) => {
 		if (!value) {
@@ -125,8 +131,29 @@
 			return;
 		}
 
+		if (routeCards.length === 0) {
+			emptyMessage.classList.add(hiddenClass);
+			return;
+		}
+
 		const hasVisibleCard = routeCards.some((card) => !card.classList.contains(hiddenClass));
 		emptyMessage.classList.toggle(hiddenClass, hasVisibleCard);
+	};
+
+	const refreshRouteCards = () => {
+		const activeGroup = cardContainer?.dataset.activeGroup;
+		routeCards = Array.from(cardContainer?.querySelectorAll('[data-route-group].is-active [data-route-card]') || []);
+
+		if (!activeGroup && routeGroups.length > 0) {
+			const fallbackGroup = routeGroups[0];
+			cardContainer.dataset.activeGroup = fallbackGroup.dataset.routeGroup;
+		}
+
+		routeCards.forEach((card) => {
+			card.classList.remove(hiddenClass);
+		});
+
+		updateEmptyState();
 	};
 
 	const clearError = () => {
@@ -145,7 +172,7 @@
 		errorMessage.classList.remove(hiddenClass);
 	};
 
-	const applyFilter = () => {
+	const runFilter = ({ closeDropdown: shouldClose = true } = {}) => {
 		const startValue = sanitizeTime(startSelect?.value || '');
 		const endValue = sanitizeTime(endSelect?.value || '');
 
@@ -153,7 +180,8 @@
 
 		if (startValue !== null && endValue !== null && startValue > endValue) {
 			showError('Jam selesai harus setelah jam mulai.');
-			return;
+			updateEmptyState();
+			return false;
 		}
 
 		routeCards.forEach((card) => {
@@ -178,7 +206,16 @@
 		});
 
 		updateEmptyState();
-		closeDropdown();
+
+		if (shouldClose) {
+			closeDropdown();
+		}
+
+		return true;
+	};
+
+	const applyFilter = () => {
+		runFilter({ closeDropdown: true });
 	};
 
 	const resetFilter = () => {
@@ -191,6 +228,7 @@
 		}
 
 		clearError();
+		refreshRouteCards();
 		routeCards.forEach((card) => {
 			card.classList.remove(hiddenClass);
 		});
@@ -229,5 +267,177 @@
 	startSelect?.addEventListener('change', clearError);
 	endSelect?.addEventListener('change', clearError);
 
-	updateEmptyState();
+	refreshRouteCards();
+
+	const getToggleLabelForState = (mode) => {
+		if (!modeToggleButton) {
+			return '';
+		}
+
+		const labelDirect = modeToggleButton.dataset.labelDirect || 'Lihat kereta langsung';
+		const labelMulti = modeToggleButton.dataset.labelMulti || 'Lihat koneksi multi-moda';
+
+		return mode === 'direct' ? labelMulti : labelDirect;
+	};
+
+	const setMode = (mode) => {
+		if (!cardContainer) {
+			return;
+		}
+
+		const groupExists = routeGroups.some((group) => group.dataset.routeGroup === mode);
+
+		if (!groupExists) {
+			return;
+		}
+
+		const currentMode = cardContainer.dataset.activeGroup || 'direct';
+
+		if (currentMode === mode) {
+			return;
+		}
+
+		routeGroups.forEach((group) => {
+			const isTarget = group.dataset.routeGroup === mode;
+			group.classList.toggle('is-active', isTarget);
+			group.classList.toggle(hiddenClass, !isTarget);
+		});
+
+		cardContainer.dataset.activeGroup = mode;
+		refreshRouteCards();
+		runFilter({ closeDropdown: false });
+
+		if (modeToggleButton) {
+			modeToggleButton.textContent = getToggleLabelForState(mode);
+		}
+	};
+
+	if (modeToggleButton) {
+		const initialMode = cardContainer?.dataset.activeGroup || 'direct';
+		modeToggleButton.textContent = getToggleLabelForState(initialMode);
+
+		modeToggleButton.addEventListener('click', () => {
+			if (!cardContainer) {
+				return;
+			}
+
+			const currentMode = cardContainer.dataset.activeGroup || 'direct';
+			const nextMode = currentMode === 'direct' ? 'multi' : 'direct';
+			setMode(nextMode);
+		});
+	}
+
+	const expandCard = (card) => {
+		const details = card.querySelector('[data-route-card-details]');
+		const toggle = card.querySelector('[data-route-card-toggle]');
+		if (!details || !toggle) {
+			return;
+		}
+
+		details.classList.remove(hiddenClass);
+		card.classList.add(expandedClass);
+		card.dataset.routeCardState = 'expanded';
+		toggle.setAttribute('aria-expanded', 'true');
+	};
+
+	const collapseCard = (card) => {
+		const details = card.querySelector('[data-route-card-details]');
+		const toggle = card.querySelector('[data-route-card-toggle]');
+		if (!details || !toggle) {
+			return;
+		}
+
+		details.classList.add(hiddenClass);
+		card.classList.remove(expandedClass);
+		card.dataset.routeCardState = 'collapsed';
+		toggle.setAttribute('aria-expanded', 'false');
+	};
+
+	const toggleCard = (card) => {
+		if (card.dataset.routeCardState === 'expanded') {
+			collapseCard(card);
+			return;
+		}
+
+		expandCard(card);
+	};
+
+	const allRouteCards = Array.from(document.querySelectorAll('[data-route-card]'));
+
+	allRouteCards.forEach((card) => {
+		const toggle = card.querySelector('[data-route-card-toggle]');
+		const selectButton = card.querySelector('[data-route-select]');
+
+		if (!toggle) {
+			return;
+		}
+
+		toggle.addEventListener('click', (event) => {
+			event.stopPropagation();
+			toggleCard(card);
+		});
+
+		toggle.addEventListener('keydown', (event) => {
+			if (event.key !== 'Enter' && event.key !== ' ') {
+				return;
+			}
+
+			event.preventDefault();
+			toggleCard(card);
+		});
+
+		card.addEventListener('keydown', (event) => {
+			if (event.target !== card) {
+				return;
+			}
+
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				toggleCard(card);
+			}
+		});
+
+		selectButton?.addEventListener('click', (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			let payload = {};
+			const payloadRaw = selectButton.dataset.routePayload;
+
+			if (payloadRaw) {
+				try {
+					payload = JSON.parse(payloadRaw);
+				} catch (error) {
+					console.error('Gagal membaca data rute:', error);
+				}
+			}
+
+			if (cardContainer?.dataset.searchSummary) {
+				try {
+					payload.summary = JSON.parse(cardContainer.dataset.searchSummary);
+				} catch (error) {
+					console.error('Gagal membaca ringkasan pencarian:', error);
+				}
+			}
+
+			try {
+				sessionStorage.setItem(selectionStorageKey, JSON.stringify(payload));
+			} catch (error) {
+				console.warn('Tidak dapat menyimpan rute terpilih ke sessionStorage:', error);
+			}
+
+			document.dispatchEvent(new CustomEvent('routes:select', { detail: { card, payload } }));
+
+			if (!reservationUrl) {
+				return;
+			}
+
+			selectButton.disabled = true;
+			selectButton.classList.add('is-loading');
+			selectButton.dataset.originalLabel = selectButton.dataset.originalLabel || selectButton.textContent;
+			selectButton.textContent = 'Memuat...';
+
+			window.location.assign(reservationUrl);
+		});
+	});
 })();

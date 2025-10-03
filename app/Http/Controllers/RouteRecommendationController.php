@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Route as TrainRoute;
+use App\Models\Schedule;
 use App\Models\Station;
+use App\Models\Train;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -50,12 +53,13 @@ class RouteRecommendationController extends Controller
         $originName = $originStation?->name ?? $validated['origin_label'];
         $destinationName = $destinationStation?->name ?? $validated['destination_label'];
 
-    $selectedDate = Carbon::parse($validated['departure_date'])->startOfDay();
-    $today = Carbon::now()->startOfDay();
-    $baseDate = $selectedDate->greaterThan($today) ? $selectedDate : $today;
-    $dateOptions = $this->buildDateOptions($baseDate, $selectedDate);
+        $selectedDate = Carbon::parse($validated['departure_date'])->startOfDay();
+        $today = Carbon::now()->startOfDay();
+        $baseDate = $selectedDate->greaterThan($today) ? $selectedDate : $today;
+        $dateOptions = $this->buildDateOptions($baseDate, $selectedDate);
 
-        $recommendations = $this->buildSampleRecommendations($originName, $destinationName);
+        $directRecommendations = $this->buildDirectRecommendations($originStation, $destinationStation);
+        $multiModalRecommendations = $this->buildMultiModalRecommendations($originName, $destinationName);
 
         $viewData = [
             'searchSummary' => [
@@ -64,7 +68,8 @@ class RouteRecommendationController extends Controller
                 'departure_date' => $this->formatIndonesianDate($selectedDate),
             ],
             'dateOptions' => $dateOptions,
-            'recommendations' => $recommendations,
+            'directRecommendations' => $directRecommendations,
+            'multiModalRecommendations' => $multiModalRecommendations,
         ];
 
         $request->session()->put(self::SESSION_KEY, $viewData);
@@ -147,7 +152,123 @@ class RouteRecommendationController extends Controller
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function buildSampleRecommendations(string $originName, string $destinationName): array
+    private function buildDirectRecommendations(?Station $origin, ?Station $destination): array
+    {
+        if (! $origin || ! $destination) {
+            return [];
+        }
+
+        $originRoutes = TrainRoute::query()
+            ->where('station_id', $origin->id)
+            ->get()
+            ->keyBy('train_id');
+
+        if ($originRoutes->isEmpty()) {
+            return [];
+        }
+
+        $destinationRoutes = TrainRoute::query()
+            ->whereIn('train_id', $originRoutes->keys())
+            ->where('station_id', $destination->id)
+            ->get()
+            ->keyBy('train_id');
+
+        if ($destinationRoutes->isEmpty()) {
+            return [];
+        }
+
+        $trainIds = $destinationRoutes->keys();
+
+        $trains = Train::query()
+            ->whereIn('id', $trainIds)
+            ->get()
+            ->keyBy('id');
+
+        $originSchedules = Schedule::query()
+            ->whereIn('train_id', $trainIds)
+            ->where('station_id', $origin->id)
+            ->get()
+            ->keyBy('train_id');
+
+        $destinationSchedules = Schedule::query()
+            ->whereIn('train_id', $trainIds)
+            ->where('station_id', $destination->id)
+            ->get()
+            ->keyBy('train_id');
+
+        $recommendations = [];
+
+        foreach ($destinationRoutes as $trainId => $destinationRoute) {
+            $originRoute = $originRoutes[$trainId] ?? null;
+            $train = $trains[$trainId] ?? null;
+
+            if (! $originRoute || ! $train) {
+                continue;
+            }
+
+            if ($originRoute->stop_order >= $destinationRoute->stop_order) {
+                continue;
+            }
+
+            $originSchedule = $originSchedules[$trainId] ?? null;
+            $destinationSchedule = $destinationSchedules[$trainId] ?? null;
+
+            $departureTime = $originSchedule?->departure;
+            $arrivalTime = $destinationSchedule?->arrival;
+            $price = $originSchedule?->price ?? $destinationSchedule?->price ?? null;
+
+            $durationLabel = null;
+
+            if ($departureTime && $arrivalTime) {
+                try {
+                    $departureMoment = Carbon::createFromFormat('H:i', $departureTime);
+                    $arrivalMoment = Carbon::createFromFormat('H:i', $arrivalTime);
+
+                    if ($arrivalMoment->lessThanOrEqualTo($departureMoment)) {
+                        $arrivalMoment = $arrivalMoment->addDay();
+                    }
+
+                    $durationMinutes = $departureMoment->diffInMinutes($arrivalMoment);
+                    $hours = intdiv($durationMinutes, 60);
+                    $minutes = $durationMinutes % 60;
+                    $durationLabel = sprintf('%dj %02dm', $hours, $minutes);
+                } catch (\Throwable $e) {
+                    $durationLabel = null;
+                }
+            }
+
+            $recommendations[] = [
+                'title' => $train->name ?? $train->code ?? 'Kereta Langsung',
+                'train_code' => $train->code ?? null,
+                'price' => $price,
+                'duration_label' => $durationLabel,
+                'legs' => [[
+                    'mode_icon' => 'train',
+                    'mode_label' => $train->name ?? 'Kereta',
+                    'transport_name' => $train->code ?? $train->name ?? 'Kereta',
+                    'badge_class' => 'from-indigo-500 to-purple-500',
+                    'departure' => [
+                        'time' => $departureTime,
+                        'station' => $origin->name,
+                    ],
+                    'arrival' => [
+                        'time' => $arrivalTime,
+                        'station' => $destination->name,
+                        'type' => 'destination',
+                    ],
+                    'notes' => 'Perjalanan langsung tanpa transit',
+                ]],
+                'destination_label' => $destination->name,
+            ];
+        }
+
+        return collect($recommendations)
+            ->sortBy(fn (array $item) => $item['legs'][0]['departure']['time'] ?? '99:99')
+            ->values()
+            ->all();
+    }
+
+    private function buildMultiModalRecommendations(string $originName, string $destinationName): array
     {
         $baseLegs = [
             [

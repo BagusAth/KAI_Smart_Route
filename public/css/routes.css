@@ -2,6 +2,10 @@ body.routes-page-body {
 	font-family: 'Poppins', sans-serif;
 }
 
+.hidden {
+	display: none !important;
+}
+
 .date-option-button {
 	min-width: 120px;
 	border-color: rgba(99, 102, 241, 0.3);
@@ -34,6 +38,7 @@ body.routes-page-body {
 	border-radius: 32px;
 	box-shadow: 0 24px 60px rgba(79, 70, 229, 0.16);
 	transition: transform 0.5s ease, box-shadow 0.5s ease;
+	cursor: pointer;
 }
 
 .route-card:hover {
@@ -41,8 +46,219 @@ body.routes-page-body {
 	box-shadow: 0 32px 80px rgba(79, 70, 229, 0.22);
 }
 
+.route-card.is-expanded {
+	box-shadow: 0 32px 80px rgba(129, 140, 248, 0.28);
+}
+
+.route-card-summary {
+	display: block;
+	outline: none;
+}
+
+.route-card-summary:focus-visible {
+	box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.35);
+	border-radius: 24px;
+}
+
+.route-card-toggle-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.35rem;
+	border-radius: 9999px;
+	border: 1px solid rgba(99, 102, 241, 0.25);
+	background: linear-gradient(135deg, rgba(224, 231, 255, 0.6), rgba(221, 214, 254, 0.4));
+	transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.route-card-summary:hover .route-card-toggle-icon,
+.route-card-summary:focus-visible .route-card-toggle-icon {
+	background: linear-gradient(135deg, rgba(129, 140, 248, 0.25), rgba(196, 181, 253, 0.25));
+}
+
+.route-card.is-expanded .route-card-toggle-icon svg {
+	transform: rotate(180deg);
+}
+
+.route-card-toggle-icon svg {
+	transition: transform 0.25s ease;
+}
+
+.route-card-footer {
+	align-items: center;
+}
+
+.route-card-select {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.65rem 1.6rem;
+	border-radius: 9999px;
+	border: none;
+	font-weight: 600;
+	font-size: 0.95rem;
+	background-image: linear-gradient(135deg, #6366f1, #a855f7);
+	color: #ffffff;
+	box-shadow: 0 18px 36px rgba(99, 102, 241, 0.24);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+	cursor: pointer;
+}
+
+.route-card-select.is-loading {
+	opacity: 0.7;
+	cursor: progress;
+}
+
+.route-card-select.is-loading {
+	opacity: 0.75;
+	cursor: progress;
+	transform: none;
+	box-shadow: 0 18px 36px rgba(99, 102, 241, 0.24);
+}
+
+.route-card-select:hover,
+.route-card-select:focus-visible {
+	transform: translateY(-1px);
+	box-shadow: 0 24px 50px rgba(99, 102, 241, 0.3);
+	outline: none;
+}
+
+.route-card-select.is-loading:hover,
+.route-card-select.is-loading:focus-visible {
+	transform: none;
+	box-shadow: 0 18px 36px rgba(99, 102, 241, 0.24);
+}
+
+.route-card-details {
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(129, 140, 248, 0.18);
+}
+
+.route-card-detail-timeline {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 1.5rem;
+}
+
+.route-card-detail-item {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 1rem;
+	align-items: start;
+}
+
+.route-card-detail-dot {
+	width: 14px;
+	height: 14px;
+	border-radius: 9999px;
+	border: 3px solid rgba(129, 140, 248, 0.5);
+	background-color: #ffffff;
+	box-shadow: 0 0 0 4px rgba(224, 231, 255, 0.6);
+}
+
+.route-card-detail-dot[data-type="departure"] {
+	border-color: rgba(56, 189, 248, 0.75);
+	box-shadow: 0 0 0 4px rgba(191, 219, 254, 0.65);
+}
+
+.route-card-detail-dot[data-type="arrival"] {
+	border-color: rgba(129, 140, 248, 0.95);
+	box-shadow: 0 0 0 4px rgba(199, 210, 254, 0.8);
+}
+
+.route-card-detail-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.route-card-detail-header {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: baseline;
+}
+
+.route-card-detail-time {
+	font-size: 1rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.route-card-detail-station {
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: #6366f1;
+}
+
+.route-card-detail-label {
+	margin: 0;
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: #312e81;
+}
+
+.route-card-detail-description {
+	margin: 0;
+	font-size: 0.85rem;
+	color: #64748b;
+}
+
 .route-card-label {
 	letter-spacing: 0.2em;
+}
+
+.route-cards-group {
+	display: grid;
+	gap: 2rem;
+}
+
+.route-empty-state {
+ text-align: center;
+ padding: 3rem 2rem;
+ border: 1px dashed rgba(129, 140, 248, 0.35);
+ border-radius: 28px;
+ background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(238, 242, 255, 0.8));
+ box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.route-empty-state-title {
+ margin: 0;
+ font-size: 1.25rem;
+ font-weight: 600;
+ color: #312e81;
+}
+
+.route-empty-state-description {
+ margin: 0.75rem 0 0;
+ font-size: 0.95rem;
+ color: #64748b;
+}
+
+.route-connecting-button {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ padding: 0.85rem 2.75rem;
+ border-radius: 9999px;
+ font-size: 0.95rem;
+ font-weight: 600;
+ background-image: linear-gradient(135deg, #6366f1, #a855f7);
+ color: #ffffff;
+ border: none;
+ box-shadow: 0 20px 44px rgba(99, 102, 241, 0.28);
+ transition: transform 0.25s ease, box-shadow 0.25s ease;
+ cursor: pointer;
+}
+
+.route-connecting-button:hover,
+.route-connecting-button:focus-visible {
+ transform: translateY(-2px);
+ box-shadow: 0 28px 60px rgba(99, 102, 241, 0.35);
+ outline: none;
 }
 
 .route-filter {
@@ -163,27 +379,17 @@ body.routes-page-body {
 }
 
 .route-empty-message {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	margin: 2.5rem auto 0;
-	padding: 0.9rem 2.5rem;
-	border-radius: 9999px;
-	font-size: 0.95rem;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.15em;
-	color: #ffffff;
-	background-image: linear-gradient(135deg, #6366f1, #a855f7);
-	border: none;
-	box-shadow: 0 18px 42px rgba(99, 102, 241, 0.28);
-	cursor: pointer;
-	transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.route-empty-message:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 24px 56px rgba(99, 102, 241, 0.35);
+ display: inline-flex;
+ margin: 2rem auto 0;
+ padding: 0.85rem 2.5rem;
+ border-radius: 9999px;
+ font-size: 0.85rem;
+ font-weight: 600;
+ letter-spacing: 0.12em;
+ text-transform: uppercase;
+ color: #6366f1;
+ background-color: rgba(224, 231, 255, 0.6);
+ box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.25);
 }
 
 .route-connector {
