@@ -53,6 +53,62 @@ body.reservation-body {
 	gap: 1.75rem;
 }
 
+.reservation-passenger-list {
+	display: grid;
+	gap: 1.5rem;
+}
+
+.reservation-passenger-card {
+	border-radius: 24px;
+	border: 1px solid rgba(129, 140, 248, 0.25);
+	background: linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 255, 0.85));
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 18px 46px rgba(129, 140, 248, 0.16);
+	padding: 1.75rem;
+	display: grid;
+	gap: 1.5rem;
+}
+
+.reservation-passenger-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	align-items: flex-start;
+}
+
+.reservation-passenger-label {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.reservation-passenger-caption {
+	display: inline-block;
+	margin-top: 0.35rem;
+	font-size: 0.8rem;
+	color: #64748b;
+}
+
+.reservation-passenger-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.4rem 1rem;
+	border-radius: 9999px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #4338ca;
+	background: rgba(224, 231, 255, 0.45);
+	border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.reservation-passenger-body {
+	display: grid;
+	gap: 1.25rem;
+}
+
 .reservation-form-group {
 	display: flex;
 	flex-direction: column;
@@ -114,6 +170,12 @@ body.reservation-body {
 	justify-content: flex-end;
 }
 
+.reservation-actions {
+	margin-top: 1.75rem;
+	display: flex;
+	justify-content: flex-end;
+}
+
 .reservation-submit {
 	display: inline-flex;
 	align-items: center;
@@ -154,14 +216,27 @@ body.reservation-body {
 }
 
 .reservation-alert {
-	margin-top: 1.5rem;
-	border-radius: 18px;
-	padding: 1.1rem 1.5rem;
-	font-size: 0.9rem;
+	margin: 1.5rem 0;
+	padding: 1rem 1.25rem;
+	border-radius: 0.75rem;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	border: 1px solid transparent;
 	font-weight: 500;
-	color: #166534;
-	background-color: rgba(134, 239, 172, 0.3);
-	border: 1px solid rgba(22, 101, 52, 0.35);
+}
+
+.reservation-alert--error {
+	background-color: rgba(255, 76, 96, 0.15);
+	border: 1px solid rgba(255, 76, 96, 0.3);
+	color: #d61f27;
+}
+.reservation-alert-list {
+	margin: 0.5rem 0 0;
+	padding-left: 1.2rem;
+}
+
+.reservation-status {
+	margin-top: 1rem;
 }
 
 .reservation-side {
@@ -366,6 +441,10 @@ body.reservation-body {
 	.reservation-side {
 		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 	}
+
+	.reservation-actions {
+		justify-content: center;
+	}
 }
 
 @media (max-width: 640px) {
@@ -383,6 +462,10 @@ body.reservation-body {
 
 	.reservation-form-actions {
 		justify-content: center;
+	}
+
+	.reservation-passenger-card {
+		padding: 1.5rem;
 	}
 
 	.reservation-selection-header {

@@ -77,7 +77,60 @@
 	let isDropdownOpen = false;
 
 	const hiddenClass = 'hidden';
-const expandedClass = 'is-expanded';
+	const expandedClass = 'is-expanded';
+	const connectorSelector = '.route-connector';
+	const eventDotSelector = '[data-route-event-dot]';
+	let connectorAnimationFrame = null;
+
+	function findTimelineColumnForConnector(connector) {
+		let column = connector.previousElementSibling;
+
+		while (column && column.classList && column.classList.contains('route-connector')) {
+			column = column.previousElementSibling;
+		}
+
+		return column;
+	}
+
+	function positionRouteConnectors() {
+		const connectors = Array.from(document.querySelectorAll(connectorSelector));
+
+		connectors.forEach((connector) => {
+			const column = findTimelineColumnForConnector(connector);
+			if (!column || column.offsetParent === null) {
+				return;
+			}
+
+			const dot = column.querySelector(eventDotSelector);
+			if (!dot) {
+				return;
+			}
+
+			const columnRect = column.getBoundingClientRect();
+			const dotRect = dot.getBoundingClientRect();
+
+			if (columnRect.height === 0 || dotRect.height === 0) {
+				return;
+			}
+
+			const connectorRect = connector.getBoundingClientRect();
+			const connectorHeight = connectorRect.height || parseFloat(window.getComputedStyle(connector).height) || 4;
+			const offset = dotRect.top + dotRect.height / 2 - columnRect.top - connectorHeight / 2;
+
+			connector.style.marginTop = `${Math.max(offset, 0)}px`;
+		});
+	}
+
+	function scheduleConnectorPositioning() {
+		if (connectorAnimationFrame !== null) {
+			cancelAnimationFrame(connectorAnimationFrame);
+		}
+
+		connectorAnimationFrame = requestAnimationFrame(() => {
+			connectorAnimationFrame = null;
+			positionRouteConnectors();
+		});
+	}
 
 	const sanitizeTime = (value) => {
 		if (!value) {
@@ -154,6 +207,7 @@ const expandedClass = 'is-expanded';
 		});
 
 		updateEmptyState();
+		scheduleConnectorPositioning();
 	};
 
 	const clearError = () => {
@@ -211,6 +265,8 @@ const expandedClass = 'is-expanded';
 			closeDropdown();
 		}
 
+		scheduleConnectorPositioning();
+
 		return true;
 	};
 
@@ -233,6 +289,7 @@ const expandedClass = 'is-expanded';
 			card.classList.remove(hiddenClass);
 		});
 		updateEmptyState();
+		scheduleConnectorPositioning();
 	};
 
 	if (toggleButton && dropdown) {
@@ -306,6 +363,7 @@ const expandedClass = 'is-expanded';
 		cardContainer.dataset.activeGroup = mode;
 		refreshRouteCards();
 		runFilter({ closeDropdown: false });
+		scheduleConnectorPositioning();
 
 		if (modeToggleButton) {
 			modeToggleButton.textContent = getToggleLabelForState(mode);
@@ -326,6 +384,7 @@ const expandedClass = 'is-expanded';
 			setMode(nextMode);
 		});
 	}
+
 
 	const expandCard = (card) => {
 		const details = card.querySelector('[data-route-card-details]');
@@ -420,6 +479,13 @@ const expandedClass = 'is-expanded';
 				}
 			}
 
+			if (cardContainer?.dataset.passengerCount) {
+				const count = Number(cardContainer.dataset.passengerCount);
+				if (!Number.isNaN(count) && count > 0) {
+					payload.passenger_count = count;
+				}
+			}
+
 			try {
 				sessionStorage.setItem(selectionStorageKey, JSON.stringify(payload));
 			} catch (error) {
@@ -440,4 +506,12 @@ const expandedClass = 'is-expanded';
 			window.location.assign(reservationUrl);
 		});
 	});
+
+	document.addEventListener('routes:date-change', scheduleConnectorPositioning);
+	window.addEventListener('resize', scheduleConnectorPositioning);
+	window.addEventListener('load', positionRouteConnectors);
+
+	if (document.fonts && document.fonts.addEventListener) {
+		document.fonts.addEventListener('loadingdone', scheduleConnectorPositioning);
+	}
 })();

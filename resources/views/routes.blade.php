@@ -123,14 +123,17 @@
 							$activeGroup = 'direct';
 							$initialToggleLabel = $hasMulti ? 'Lihat koneksi multi-moda' : null;
 							$directToggleLabel = $hasDirect ? 'Lihat kereta langsung' : 'Lihat info kereta langsung';
+							$reservationMeta = $reservation ?? [];
+							$passengerCount = (int) ($reservationMeta['passenger_count'] ?? 1);
 						@endphp
 
 						<div
 							class="mt-12 space-y-8"
 							data-route-card-container
 							data-active-group="{{ $activeGroup }}"
-							data-reservation-url="{{ route('reservasi') }}"
+							data-reservation-url="{{ route('reservasi.show') }}"
 							data-search-summary='@json($searchSummary, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)'
+							data-passenger-count="{{ $passengerCount }}"
 						>
 							<div class="route-cards-group {{ $activeGroup === 'direct' ? 'is-active' : 'hidden' }}" data-route-group="direct">
 								@if ($hasDirect)

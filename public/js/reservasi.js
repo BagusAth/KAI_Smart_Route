@@ -2,6 +2,35 @@
 	const form = document.querySelector('[data-reservation-form]');
 	const selectionStorageKey = 'kaizen:selectedRoute';
 
+	let selectionPayloadInput = null;
+	if (form) {
+		selectionPayloadInput = form.querySelector('[data-selection-payload-input]');
+		if (!selectionPayloadInput) {
+			selectionPayloadInput = document.createElement('input');
+			selectionPayloadInput.type = 'hidden';
+			selectionPayloadInput.name = 'selection_payload';
+			selectionPayloadInput.dataset.selectionPayloadInput = 'true';
+			form.appendChild(selectionPayloadInput);
+		}
+	}
+
+	const setSelectionPayload = (payload) => {
+		if (!selectionPayloadInput) {
+			return;
+		}
+
+		if (!payload) {
+			selectionPayloadInput.value = '';
+			return;
+		}
+
+		try {
+			selectionPayloadInput.value = JSON.stringify(payload);
+		} catch (error) {
+			selectionPayloadInput.value = '';
+		}
+	};
+
 	const selectionCard = document.querySelector('[data-selection-card]');
 	const selectionBody = selectionCard?.querySelector('[data-selection-body]');
 	const selectionEmpty = selectionCard?.querySelector('[data-selection-empty]');
@@ -49,7 +78,7 @@
 		}
 
 		if (selectionTitle) {
-			selectionTitle.textContent = selection.title || 'Rute Dipilih';
+			selectionTitle.textContent = selection.title || selection.summary?.title || 'Rute Dipilih';
 		}
 
 		if (selectionSubtitle) {
@@ -64,7 +93,7 @@
 		}
 
 		if (selectionTrain) {
-			selectionTrain.textContent = selection.train_code || '—';
+			selectionTrain.textContent = selection.train_name || selection.train_code || '—';
 		}
 
 		if (selectionDuration) {
@@ -153,27 +182,36 @@
 
 		if (!storedValue) {
 			clearSelectionView();
+			setSelectionPayload(null);
 			return;
 		}
 
 		try {
 			const selection = JSON.parse(storedValue);
 			renderSelection(selection);
+			setSelectionPayload(selection);
 		} catch (error) {
 			console.error('Gagal memuat data rute terpilih:', error);
 			clearSelectionView();
+			setSelectionPayload(null);
 		}
 	};
 
 	loadSelectionFromStorage();
+
+	if (!selectionPayloadInput) {
+		setSelectionPayload(null);
+	}
 
 	if (!form) {
 		return;
 	}
 
 	const alertBox = document.querySelector('[data-reservation-alert]');
-	const submitButton = form.querySelector('[data-submit-button]');
-	const fieldSelectors = ['full_name', 'national_id', 'phone_number'];
+	const submitButton = document.querySelector('[data-submit-button]');
+	const submitButtonInitialLabel = submitButton?.textContent ?? '';
+	const fieldInputs = Array.from(form.querySelectorAll('[data-field]'));
+	const fieldKeys = [...new Set(fieldInputs.map((input) => input.dataset.field))];
 
 	const validators = {
 		full_name(value) {
@@ -242,14 +280,19 @@
 	};
 
 	const validateField = (fieldName) => {
-		const value = form.elements[fieldName]?.value ?? '';
-		const validator = validators[fieldName];
+		const { input } = getFieldElements(fieldName);
+		if (!input) {
+			return true;
+		}
+
+		const fieldType = input.dataset.fieldType;
+		const validator = validators[fieldType];
 
 		if (!validator) {
 			return true;
 		}
 
-		const result = validator(value);
+		const result = validator(input.value ?? '');
 		setFieldState(fieldName, result);
 
 		return !result;
@@ -257,7 +300,7 @@
 
 	const validateAllFields = () => {
 		let isValid = true;
-		fieldSelectors.forEach((field) => {
+		fieldKeys.forEach((field) => {
 			const fieldValid = validateField(field);
 			if (!fieldValid && isValid) {
 				const { input } = getFieldElements(field);
@@ -275,55 +318,42 @@
 		}
 	};
 
-	if (alertBox) {
-		alertBox.classList.add('hidden');
-	}
-
-	fieldSelectors.forEach((field) => {
-		const { input } = getFieldElements(field);
-		if (!input) {
+	fieldInputs.forEach((input) => {
+		const fieldKey = input.dataset.field;
+		if (!fieldKey) {
 			return;
 		}
 
 		input.addEventListener('input', () => {
-			validateField(field);
+			validateField(fieldKey);
 			resetAlert();
 		});
 
 		input.addEventListener('blur', () => {
-			validateField(field);
+			validateField(fieldKey);
 		});
 	});
 
 	form.addEventListener('submit', (event) => {
-		event.preventDefault();
-		resetAlert();
-
 		const isValid = validateAllFields();
 
 		if (!isValid) {
+			event.preventDefault();
+			resetAlert();
+
+			if (submitButton) {
+				submitButton.disabled = false;
+				submitButton.classList.remove('is-loading');
+				submitButton.textContent = submitButtonInitialLabel;
+			}
+
 			return;
 		}
 
 		if (submitButton) {
 			submitButton.disabled = true;
 			submitButton.classList.add('is-loading');
-			submitButton.textContent = 'Menyimpan...';
+			submitButton.textContent = 'Memproses...';
 		}
-
-		window.setTimeout(() => {
-			if (alertBox) {
-				alertBox.classList.remove('hidden');
-			}
-
-			if (submitButton) {
-				submitButton.disabled = false;
-				submitButton.classList.remove('is-loading');
-				submitButton.textContent = 'Simpan dan Lanjutkan';
-			}
-
-			form.reset();
-			fieldSelectors.forEach((field) => setFieldState(field, null));
-		}, 600);
 	});
 })();

@@ -47,89 +47,157 @@
 									</p>
 								</div>
 
-								<form method="POST" action="#" class="reservation-form" data-reservation-form novalidate>
+								@if ($errors->any())
+									<div class="reservation-alert reservation-alert--error" role="alert">
+										<strong>Periksa kembali data penumpang:</strong>
+										<ul class="reservation-alert-list">
+											@foreach ($errors->all() as $error)
+												<li>{{ $error }}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
+								@php
+									$passengerForms = $passengerForms ?? collect();
+								@endphp
+								<form
+									id="reservation-form"
+									method="POST"
+									action="{{ route('reservasi.submit') }}"
+									class="reservation-form"
+									data-reservation-form
+									novalidate
+								>
 									@csrf
-									<div class="reservation-form-group">
-										<label for="full_name" class="reservation-label">Nama Lengkap</label>
-										<div class="reservation-input-wrapper" data-field-wrapper>
-											<input
-												type="text"
-												name="full_name"
-												id="full_name"
-												class="reservation-input"
-												placeholder="Nama sesuai KTP"
-												autocomplete="name"
-												required
-												data-field="full_name"
-												maxlength="120"
-											>
-											<span class="reservation-input-icon" aria-hidden="true">
-												<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a9.76 9.76 0 0115 0" />
-												</svg>
-											</span>
-										</div>
-										<p class="reservation-error" id="full_name-error" data-error-for="full_name"></p>
-									</div>
+									<div class="reservation-passenger-list">
+										@foreach ($passengerForms as $passenger)
+											@php
+												$fullNameField = $passenger['fields']['full_name'];
+												$nikField = $passenger['fields']['national_id'];
+												$phoneField = $passenger['fields']['phone_number'];
+												$fullNameError = $errors->first('passengers.' . $passenger['index'] . '.full_name');
+												$nikError = $errors->first('passengers.' . $passenger['index'] . '.national_id');
+												$phoneError = $errors->first('passengers.' . $passenger['index'] . '.phone_number');
+											@endphp
+											<section class="reservation-passenger-card" data-passenger-card>
+												<header class="reservation-passenger-header">
+													<div>
+														<p class="reservation-passenger-label">Penumpang {{ $passenger['number'] }}</p>
+														<span class="reservation-passenger-caption">Isi sesuai identitas resmi</span>
+													</div>
+													<span class="reservation-passenger-badge">#{{ str_pad((string) $passenger['number'], 2, '0', STR_PAD_LEFT) }}</span>
+												</header>
+												<div class="reservation-passenger-body">
+													<div class="reservation-form-group">
+														<label class="reservation-label" for="{{ $fullNameField['error_id'] }}-input">Nama Lengkap</label>
+														<div class="reservation-input-wrapper {{ $fullNameError ? 'is-invalid' : '' }}" data-field-wrapper>
+															<input
+																type="text"
+																name="{{ $fullNameField['name'] }}"
+																id="{{ $fullNameField['error_id'] }}-input"
+																value="{{ $fullNameField['value'] }}"
+																class="reservation-input"
+																placeholder="Nama sesuai KTP"
+																autocomplete="name"
+																required
+																maxlength="120"
+																data-field="{{ $fullNameField['field_key'] }}"
+																data-field-type="full_name"
+																data-error-id="{{ $fullNameField['error_id'] }}"
+															>
+															<span class="reservation-input-icon" aria-hidden="true">
+																<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+																	<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a9.76 9.76 0 0115 0" />
+																</svg>
+															</span>
+														</div>
+														<p
+															class="reservation-error"
+															id="{{ $fullNameField['error_id'] }}"
+															data-error-for="{{ $fullNameField['field_key'] }}"
+														>{{ $fullNameError }}</p>
+													</div>
 
-									<div class="reservation-form-group">
-										<label for="national_id" class="reservation-label">NIK</label>
-										<div class="reservation-input-wrapper" data-field-wrapper>
-											<input
-												type="text"
-												name="national_id"
-												id="national_id"
-												class="reservation-input"
-												placeholder="16 digit NIK"
-												inputmode="numeric"
-												pattern="[0-9]*"
-												required
-												data-field="national_id"
-												maxlength="16"
-											>
-											<span class="reservation-input-icon" aria-hidden="true">
-												<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75A2.25 2.25 0 0014.25 4.5h-9a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 005.25 19.5h9a2.25 2.25 0 002.25-2.25V13.5" />
-													<path stroke-linecap="round" stroke-linejoin="round" d="M18 15l3-3m0 0l-3-3m3 3H9" />
-												</svg>
-											</span>
-										</div>
-										<p class="reservation-error" id="national_id-error" data-error-for="national_id"></p>
-									</div>
+													<div class="reservation-form-group">
+														<label class="reservation-label" for="{{ $nikField['error_id'] }}-input">NIK</label>
+														<div class="reservation-input-wrapper {{ $nikError ? 'is-invalid' : '' }}" data-field-wrapper>
+															<input
+																type="text"
+																name="{{ $nikField['name'] }}"
+																id="{{ $nikField['error_id'] }}-input"
+																value="{{ $nikField['value'] }}"
+																class="reservation-input"
+																placeholder="16 digit NIK"
+																inputmode="numeric"
+																pattern="[0-9]*"
+																required
+																maxlength="16"
+																data-field="{{ $nikField['field_key'] }}"
+																data-field-type="national_id"
+																data-error-id="{{ $nikField['error_id'] }}"
+															>
+															<span class="reservation-input-icon" aria-hidden="true">
+																<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+																	<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75A2.25 2.25 0 0014.25 4.5h-9a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 005.25 19.5h9a2.25 2.25 0 002.25-2.25V13.5" />
+																	<path stroke-linecap="round" stroke-linejoin="round" d="M18 15l3-3m0 0l-3-3m3 3H9" />
+																</svg>
+															</span>
+														</div>
+														<p
+															class="reservation-error"
+															id="{{ $nikField['error_id'] }}"
+															data-error-for="{{ $nikField['field_key'] }}"
+														>{{ $nikError }}</p>
+													</div>
 
-									<div class="reservation-form-group">
-										<label for="phone_number" class="reservation-label">Nomor Handphone</label>
-										<div class="reservation-input-wrapper" data-field-wrapper>
-											<input
-												type="tel"
-												name="phone_number"
-												id="phone_number"
-												class="reservation-input"
-												placeholder="Contoh: 081234567890"
-												inputmode="tel"
-												required
-												data-field="phone_number"
-												maxlength="15"
-											>
-											<span class="reservation-input-icon" aria-hidden="true">
-												<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 4.5l1.4-1.4a2.121 2.121 0 013 0l2.1 2.1c.828.828.828 2.172 0 3l-.42.42a2.25 2.25 0 000 3.182l6.348 6.348a2.25 2.25 0 003.182 0l.42-.42c.828-.828 2.172-.828 3 0l2.1 2.1a2.121 2.121 0 010 3l-1.4 1.4a3.75 3.75 0 01-4.95.22l-1.58-1.184a41.351 41.351 0 01-9.574-9.574L3.47 9.45a3.75 3.75 0 01.22-4.95z" />
-												</svg>
-											</span>
-										</div>
-										<p class="reservation-error" id="phone_number-error" data-error-for="phone_number"></p>
-									</div>
-
-									<div class="reservation-form-actions">
-										<button type="submit" class="reservation-submit" data-submit-button>
-											Simpan dan Lanjutkan
-										</button>
+													<div class="reservation-form-group">
+														<label class="reservation-label" for="{{ $phoneField['error_id'] }}-input">Nomor Handphone</label>
+														<div class="reservation-input-wrapper {{ $phoneError ? 'is-invalid' : '' }}" data-field-wrapper>
+															<input
+																type="tel"
+																name="{{ $phoneField['name'] }}"
+																id="{{ $phoneField['error_id'] }}-input"
+																value="{{ $phoneField['value'] }}"
+																class="reservation-input"
+																placeholder="Contoh: 081234567890"
+																inputmode="tel"
+																required
+																maxlength="15"
+																data-field="{{ $phoneField['field_key'] }}"
+																data-field-type="phone_number"
+																data-error-id="{{ $phoneField['error_id'] }}"
+															>
+															<span class="reservation-input-icon" aria-hidden="true">
+																<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+																	<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 4.5l1.4-1.4a2.121 2.121 0 013 0l2.1 2.1c.828.828.828 2.172 0 3l-.42.42a2.25 2.25 0 000 3.182l6.348 6.348a2.25 2.25 0 003.182 0l.42-.42c.828-.828 2.172-.828 3 0l2.1 2.1a2.121 2.121 0 010 3l-1.4 1.4a3.75 3.75 0 01-4.95.22l-1.58-1.184a41.351 41.351 0 01-9.574-9.574L3.47 9.45a3.75 3.75 0 01.22-4.95z" />
+																</svg>
+															</span>
+														</div>
+														<p
+															class="reservation-error"
+															id="{{ $phoneField['error_id'] }}"
+															data-error-for="{{ $phoneField['field_key'] }}"
+														>{{ $phoneError }}</p>
+													</div>
+												</div>
+											</section>
+										@endforeach
 									</div>
 								</form>
-								<div class="reservation-alert hidden" role="status" data-reservation-alert>
-									Data reservasi berhasil disimpan. Kami akan menghubungi Anda melalui nomor yang terdaftar.
-								</div>
 							</article>
+							<div class="reservation-actions">
+								<button type="submit" class="reservation-submit" data-submit-button form="reservation-form">
+									Lanjutkan
+								</button>
+							</div>
+							<div class="reservation-status">
+								@if (session('reservation_notice'))
+									<div class="reservation-alert reservation-alert--error">
+										{{ session('reservation_notice') }}
+									</div>
+								@endif
+							</div>
 						</div>
 
 						<aside class="reservation-side">

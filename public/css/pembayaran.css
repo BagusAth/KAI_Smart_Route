@@ -1,0 +1,215 @@
+.payment-body {
+	font-family: 'Poppins', sans-serif;
+}
+
+.payment-wrapper {
+	align-items: stretch;
+}
+
+.payment-card,
+.payment-summary-card {
+	position: relative;
+	border-radius: 32px;
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(238, 242, 255, 0.88));
+	box-shadow: 0 28px 72px rgba(99, 102, 241, 0.16);
+	padding: 2.5rem;
+	backdrop-filter: blur(10px);
+}
+
+.payment-card::after,
+.payment-summary-card::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: 32px;
+	border: 1px solid rgba(99, 102, 241, 0.12);
+	pointer-events: none;
+}
+
+.payment-card-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-bottom: 2rem;
+}
+
+.payment-card-title {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.payment-card-subtitle {
+	margin: 0;
+	font-size: 0.95rem;
+	color: #64748b;
+}
+
+.payment-passenger-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 1.25rem;
+}
+
+.payment-passenger-item {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	padding: 1.25rem 1.5rem;
+	border-radius: 24px;
+	border: 1px solid rgba(129, 140, 248, 0.25);
+	background: linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 255, 0.86));
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 18px 50px rgba(129, 140, 248, 0.16);
+}
+
+.payment-passenger-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 3rem;
+	height: 3rem;
+	border-radius: 9999px;
+	background: rgba(224, 231, 255, 0.55);
+	border: 1px solid rgba(129, 140, 248, 0.25);
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: #4338ca;
+}
+
+.payment-passenger-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.payment-passenger-name {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.payment-passenger-seat {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: #4338ca;
+}
+
+.payment-card-footer {
+	margin-top: 2.5rem;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.payment-action-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.9rem 2.75rem;
+	border-radius: 9999px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #4338ca;
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid rgba(129, 140, 248, 0.35);
+	text-decoration: none;
+}
+
+.payment-side {
+	display: grid;
+	gap: 1.75rem;
+}
+
+.payment-summary-title {
+	margin: 0;
+	font-size: 1.35rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.payment-summary-description {
+	margin: 0.5rem 0 1.5rem;
+	font-size: 0.95rem;
+	color: #64748b;
+}
+
+.payment-method-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 1rem;
+}
+
+.payment-method-item {
+	border-radius: 20px;
+	border: 1px solid rgba(148, 163, 184, 0.25);
+	background: rgba(255, 255, 255, 0.85);
+}
+
+.payment-method-label {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 1rem 1.25rem;
+}
+
+.payment-method-label input[type='radio'] {
+	accent-color: #6366f1;
+}
+
+.payment-summary-footer {
+	margin-top: 2rem;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.payment-summary-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.9rem 2.75rem;
+	border-radius: 9999px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #ffffff;
+	background-image: linear-gradient(135deg, #6366f1, #a855f7);
+	border: none;
+	box-shadow: 0 24px 60px rgba(99, 102, 241, 0.28);
+	cursor: pointer;
+}
+
+.payment-warning {
+	padding: 1.25rem 1.5rem;
+	border-radius: 20px;
+	background: rgba(254, 226, 226, 0.8);
+	color: #b91c1c;
+	border: 1px solid rgba(248, 113, 113, 0.4);
+}
+
+@media (max-width: 1024px) {
+	.payment-wrapper {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	.payment-card,
+	.payment-summary-card {
+		padding: 2rem;
+	}
+
+	.payment-action-button,
+	.payment-summary-button {
+		width: 100%;
+	}
+
+	.payment-card-footer,
+	.payment-summary-footer {
+		justify-content: center;
+	}
+}

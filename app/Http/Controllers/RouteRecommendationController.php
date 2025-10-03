@@ -58,6 +58,11 @@ class RouteRecommendationController extends Controller
         $baseDate = $selectedDate->greaterThan($today) ? $selectedDate : $today;
         $dateOptions = $this->buildDateOptions($baseDate, $selectedDate);
 
+        $passengerCount = (int) $validated['passengers'];
+
+        $request->session()->put('reservation.passenger_count', $passengerCount);
+        $request->session()->forget('reservation.passengers');
+
         $directRecommendations = $this->buildDirectRecommendations($originStation, $destinationStation);
         $multiModalRecommendations = $this->buildMultiModalRecommendations($originName, $destinationName);
 
@@ -70,6 +75,9 @@ class RouteRecommendationController extends Controller
             'dateOptions' => $dateOptions,
             'directRecommendations' => $directRecommendations,
             'multiModalRecommendations' => $multiModalRecommendations,
+            'reservation' => [
+                'passenger_count' => $passengerCount,
+            ],
         ];
 
         $request->session()->put(self::SESSION_KEY, $viewData);
@@ -206,6 +214,8 @@ class RouteRecommendationController extends Controller
                 continue;
             }
 
+            $ticketClass = $this->determinePrimaryClassForTrain($train);
+
             if ($originRoute->stop_order >= $destinationRoute->stop_order) {
                 continue;
             }
@@ -240,6 +250,8 @@ class RouteRecommendationController extends Controller
             $recommendations[] = [
                 'title' => $train->name ?? $train->code ?? 'Kereta Langsung',
                 'train_code' => $train->code ?? null,
+                'train_name' => $train->name ?? null,
+                'ticket_class' => $ticketClass,
                 'price' => $price,
                 'duration_label' => $durationLabel,
                 'legs' => [[
@@ -369,19 +381,44 @@ class RouteRecommendationController extends Controller
                 'price' => 465_000,
                 'legs' => $baseLegs,
                 'destination_label' => $destinationName,
+                'train_code' => 'KA-MTRJ',
+                'train_name' => 'Matarmaja',
+                'ticket_class' => 'Ekonomi',
             ],
             [
                 'title' => 'Rekomendasi Rute 2',
                 'price' => 520_000,
                 'legs' => $secondLegs,
                 'destination_label' => $destinationName,
+                'train_code' => 'KA-ARPA',
+                'train_name' => 'Argo Parahyangan',
+                'ticket_class' => 'Ekonomi Premium',
             ],
             [
                 'title' => 'Rekomendasi Rute 3',
                 'price' => 430_000,
                 'legs' => $thirdLegs,
                 'destination_label' => $destinationName,
+                'train_code' => 'KA-TAKA',
+                'train_name' => 'Taksaka',
+                'ticket_class' => 'Eksekutif',
             ],
         ];
+    }
+
+    private function determinePrimaryClassForTrain(Train $train): string
+    {
+        $class = $train->class ?? '';
+
+        if ($class === '') {
+            return 'Eksekutif';
+        }
+
+        if (str_contains($class, '&')) {
+            $parts = array_map('trim', explode('&', $class));
+            return $parts[0] ?: 'Eksekutif';
+        }
+
+        return trim($class) ?: 'Eksekutif';
     }
 }

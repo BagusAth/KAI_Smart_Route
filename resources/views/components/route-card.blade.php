@@ -107,6 +107,8 @@
         'subtitle' => $recommendation['subtitle'] ?? 'Perjalanan Multi-Moda',
         'type' => $cardType,
         'train_code' => $recommendation['train_code'] ?? null,
+        'train_name' => $recommendation['train_name'] ?? null,
+        'ticket_class' => $recommendation['ticket_class'] ?? null,
         'price' => $price,
         'price_label' => $priceLabel,
         'duration_label' => $durationLabel,
@@ -177,15 +179,15 @@
                             </span>
                             @if ($item['event'])
                                 <div class="mt-6 flex flex-col items-center gap-1">
-                                    <span class="inline-flex h-3 w-3 items-center justify-center rounded-full border-2 {{ $item['event_bullet_class'] }}"></span>
+                                    <span class="inline-flex h-3 w-3 items-center justify-center rounded-full border-2 {{ $item['event_bullet_class'] }}" data-route-event-dot></span>
                                     <span class="text-sm font-semibold text-slate-900">{{ $item['event']['time'] }}</span>
                                     <span class="text-xs text-slate-500">{{ $item['event']['station'] }}</span>
                                 </div>
                             @endif
                         </div>
                         @if (! $loop->last)
-                            <div class="hidden route-connector route-connector--full flex-1 self-center sm:block"></div>
-                            <div class="block route-connector route-connector--short self-center sm:hidden"></div>
+                            <div class="route-connector route-connector--full route-connector--desktop flex-1" aria-hidden="true"></div>
+                            <div class="route-connector route-connector--short route-connector--mobile" aria-hidden="true"></div>
                         @endif
                     </div>
                 @endforeach
