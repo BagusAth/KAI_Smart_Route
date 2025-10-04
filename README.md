@@ -149,18 +149,4 @@ Dataset mentah dikumpulkan melalui skrip pengumpulan (`collect-training-data*.js
 7. Anomaly Feedback Loop: Mengirim sesi anomali ke antrean (queue) untuk retraining otomatis berkala.
 8. Accessibility Metrics: Mengukur kemudahan navigasi bagi pengguna dengan kebutuhan khusus.
 
-## Kontribusi
-
-Pull request, issue, dan diskusi ide baru sangat terbuka. Pastikan mengikuti gaya kode yang konsisten dan sertakan deskripsi jelas pada setiap perubahan.
-
-## Lisensi
-
-Proyek ini menggunakan lisensi MIT (dapat disesuaikan sesuai kebutuhan organisasi Anda).
-
-## Kontak
-
-Untuk kolaborasi, pertanyaan teknis, atau demo lanjutan: silakan hubungi tim pengembang internal.
-
----
-
 Terima kasih telah menggunakan KAIzen. Fokus kami: perjalanan lebih cerdas, adil, dan aman dari eksploitasi calo.
