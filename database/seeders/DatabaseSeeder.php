@@ -13,6 +13,7 @@ use App\Models\Train;
 use App\Models\TrainCarriage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -1072,7 +1073,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        $schedules = [
+        $baseSchedules  = [
             // Argo Bromo Anggrek (GMR 08:00 -> SBI 16:10)
             ['train' => 'KA-ABA', 'station' => 'GMR', 'departure' => '08:00', 'price' => 750000, 'available_seats' => 100],
             ['train' => 'KA-ABA', 'station' => 'SBI', 'arrival' => '16:10'],
@@ -1181,6 +1182,19 @@ class DatabaseSeeder extends Seeder
             ['train' => 'KA-FEEDPDL', 'station' => 'BD', 'arrival' => '09:05'],
         ];
 
+        $schedules = [];
+        $startDate = Carbon::today();
+
+        for ($day = 0; $day < 30; $day++) {
+            $currentDate = $startDate->copy()->addDays($day);
+            
+            foreach ($baseSchedules as $schedule) {
+                $schedules[] = array_merge($schedule, [
+                    'departure_date' => $currentDate->format('Y-m-d')
+                ]);
+            }
+        }
+
         foreach ($schedules as $schedule) {
             if (! $stationIds->has($schedule['station']) || ! $trainIds->has($schedule['train'])) {
                 continue;
@@ -1190,6 +1204,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'train_id' => $trainIds[$schedule['train']],
                     'station_id' => $stationIds[$schedule['station']],
+                    'departure_date' => $schedule['departure_date'], // Tambahkan ke unique key
                 ],
                 [
                     'arrival' => $schedule['arrival'] ?? null,
@@ -1202,6 +1217,28 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        // foreach ($schedules as $schedule) {
+        //     if (! $stationIds->has($schedule['station']) || ! $trainIds->has($schedule['train'])) {
+        //         continue;
+        //     }
+
+        //     Schedule::query()->updateOrCreate(
+        //         [
+        //             'train_id' => $trainIds[$schedule['train']],
+        //             'station_id' => $stationIds[$schedule['station']],
+        //         ],
+        //         [
+        //             'arrival' => $schedule['arrival'] ?? null,
+        //             'departure' => $schedule['departure'] ?? null,
+        //             'platform_id' => isset($schedule['platform']) && isset($platformIds[$schedule['platform']]) ? $platformIds[$schedule['platform']] : null,
+        //             'price' => $schedule['price'] ?? null,
+        //             'available_seats' => $schedule['available_seats'] ?? null,
+        //             'status' => $schedule['status'] ?? 'Scheduled',
+        //             'remarks' => $schedule['remarks'] ?? null,
+        //         ]
+        //     );
+        // }
         // Alternative routes recommendations (seeded last)
         $alternativeRoutes = [
             [

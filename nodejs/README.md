@@ -1,101 +1,123 @@
-# KAI Guard - Sistem Cerdas Anti-Calo Berbasis Analisis Perilaku
+# KAIzen: Smart Route Finder & Behavior Guard Toolkit
 
-## Overview
+KAIzen adalah inisiatif modernisasi website KAI yang menghadirkan dua inovasi utama sekaligus:
 
-KAI Guard adalah sistem cerdas yang menggunakan teknologi analisis perilaku untuk membedakan pengguna manusia dari bot calo. Sistem ini menganalisis pola interaksi pengguna dengan halaman web secara real-time untuk memastikan proses pembelian tiket kereta api yang adil.
+1.  **Mesin pencarian rute cerdas** yang mampu merekomendasikan perjalanan multi-moda berdasarkan lokasi pengguna, tujuan, dan rentang waktu keberangkatan.
+2.  **Teknologi deteksi bot berbasis perilaku (Behavior Guard)** untuk menangkal calo yang menggunakan otomatisasi ketika memesan tiket.
 
-## Masalah
+Folder `nodejs/` berisi skrip pendukung yang membantu tim menguji, mengumpulkan data, dan menganalisis efektivitas fitur-fitur tersebut. Dokumen ini merangkum masalah yang kami pecahkan, fitur unggulan, serta panduan menjalankan komponen utama proyek.
 
-Setiap kali PT. KAI membuka penjualan tiket untuk periode puncak (contoh: Lebaran, Natal & Tahun Baru), tiket di rute-rute populer ludes hanya dalam hitungan menit. Sebagian besar masalah ini bukan disebabkan oleh tingginya animo masyarakat saja, tetapi oleh serangan bot otomatis yang dijalankan oleh calo profesional.
+## Masalah yang Dipecahkan
 
-Hal ini menyebabkan:
-- Pengguna asli (manusia) kalah cepat dengan bot
-- Konsumen terpaksa membeli tiket dari calo dengan harga yang jauh lebih mahal
-- Citra PT. KAI menjadi negatif
-- Beban infrastruktur server yang tinggi
+- **Rute tidak tersedia di stasiun terdekat pada rentang waktu yang diinginkan**
+  - Dampak: pengguna terpaksa merencanakan perjalanan secara manual dan memakan waktu.
+  - Solusi KAIzen: mesin rekomendasi multi-moda otomatis menyusun kombinasi kereta antarkota, Commuter Line, dan perpindahan antar stasiun.
 
-## Solusi
+- **Informasi rute masih minim** (tidak ada nomor peron, denah gerbong, estimasi biaya)
+  - Dampak: pengguna sulit menyiapkan perjalanan secara rinci.
+  - Solusi KAIzen: hasil rekomendasi menyertakan jadwal lengkap, estimasi harga, nomor peron, dan denah gerbong.
 
-KAI Guard menggunakan pendekatan analisis perilaku (behavioral analysis) untuk membedakan pengguna manusia dari bot. Sistem ini terdiri dari tiga komponen utama:
+- **Calo/bot memborong tiket saat rilis**
+  - Dampak: tiket cepat habis, harga melonjak di pasar gelap, citra perusahaan turun.
+  - Solusi KAIzen: Behavior Guard memantau input pengguna, memberikan trust score, dan memblokir perilaku mencurigakan.
 
-1. **Data Collector (Frontend)**: Mengumpulkan data perilaku pengguna seperti gerakan mouse, pola pengetikan, interaksi halaman, dan informasi perangkat.
+## Fitur Unggulan
 
-2. **Processing Engine & AI Model (Backend)**: Menganalisis data perilaku dan memberikan skor kepercayaan (trust score) untuk setiap sesi pengguna.
+1.  **Smart Route Finder**
+    - Input: lokasi asal, tujuan, rentang waktu (misal 21.00–23.00).
+    - Output: rekomendasi rute multi-moda dengan estimasi harga, waktu tempuh, nomor peron, dan denah gerbong.
+    - Contoh: pengguna dari *President University* ingin ke *Stasiun Tawang Semarang* antara 22.00–23.59. Sistem mendeteksi tidak ada kereta malam dari *Stasiun Cikarang*, lalu menawarkan rute Cikarang ➝ (Commuter Line) ➝ Bekasi ➝ (Kereta antarkota) ➝ Semarang.
 
-3. **Dashboard Monitoring**: Memvisualisasikan serangan yang berhasil diblokir dan statistik lainnya.
+2.  **Behavior Guard Trust Scoring**
+    - Mengumpulkan sinyal perilaku (gerakan mouse, kecepatan mengetik, pola klik) untuk membedakan manusia dan bot.
+    - Memberi **trust score** pada tahap pembayaran; sesi berisiko tinggi dapat diblokir atau diberi verifikasi tambahan.
 
-## Teknologi
+3.  **Automation & Analytics Toolkit (`nodejs/`)**
+    - `bot-detection-test.js`: Menjalankan simulasi bot end-to-end hingga modal pembayaran untuk memverifikasi skor kepercayaan.
+    - `collect-training-data*.js`: Mengumpulkan data perilaku bot/manusia sebagai dataset pelatihan.
+    - `train-model.js`: Melatih model TensorFlow.js sederhana untuk klasifikasi perilaku.
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Node.js, Express
-- **Machine Learning**: TensorFlow.js
-- **Database**: (Tidak diimplementasikan dalam demo ini)
+## Alur Pengalaman Pengguna
 
-## Fitur
+```mermaid
+sequenceDiagram
+    participant U as Pengguna
+    participant W as Web KAIzen
+    participant R as Smart Route Engine
+    participant G as Behavior Guard
 
-- Analisis gerakan mouse (kecepatan, akselerasi, jitter)
-- Analisis pola pengetikan (kecepatan, ritme)
-- Analisis interaksi halaman (pola scrolling, waktu di halaman)
-- Device fingerprinting (resolusi layar, browser, timezone)
-- Sistem skor kepercayaan (trust score) untuk membedakan manusia dari bot
-- Tantangan adaptif berdasarkan skor kepercayaan
+    U->>W: Isi lokasi asal, tujuan, rentang waktu
+    W->>R: Request rekomendasi multi-moda
+    R-->>W: Kirim rute alternatif + estimasi harga
+    W-->>U: Tampilkan jadwal, harga, peron, denah gerbong
+    U->>W: Lanjutkan reservasi & pilih kursi
+    W->>G: Kirim telemetri interaksi pengguna
+    G-->>W: Trust score + keputusan (allow/challenge/block)
+    W-->>U: Modal pembayaran dengan status keamanan
+```
+
+## Struktur direktori terkait
+
+```
+KAI_Smart_Route/
+├─ app/, routes/            # logika Laravel: pencarian, reservasi, pembayaran
+├─ resources/views/         # Blade templates (home, routes, reservasi, pembayaran)
+├─ public/js/               # Frontend interaksi (autocomplete, rekomendasi rute, guard)
+├─ nodejs/                  # <== skrip otomasi dan ML
+│   ├─ bot-detection-test.js
+│   ├─ collect-training-data.js
+│   ├─ collect-training-data-human.js
+│   ├─ train-model.js
+│   └─ ...
+└─ README.md                # ringkasan proyek tingkat atas
+```
 
 ## Cara Menjalankan
 
-### Prasyarat
-
-- Node.js (versi 14 atau lebih tinggi)
-- NPM (versi 6 atau lebih tinggi)
-
-### Instalasi
-
-1. Clone repositori ini
+### 1. Aplikasi Laravel (Smart Route + Behavior Guard Frontend)
 
 ```bash
-git clone https://github.com/username/kai-guard.git
-cd kai-guard
-```
-
-2. Install dependensi
-
-```bash
+# dari akar repositori
+composer install
+cp .env.example .env
+# sesuaikan konfigurasi database
+php artisan key:generate
+php artisan migrate --seed
 npm install
+npm run dev
+php artisan serve
 ```
 
-3. Jalankan aplikasi
+### 2. Behavior Guard Backend & Toolkit Node.js
 
 ```bash
-npm start
+cd nodejs
+npm install
+node server/server.js        # endpoint behavior guard
+# terminal kedua
+node bot-detection-test.js   # simulasi bot end-to-end
 ```
 
-4. Buka browser dan akses `http://localhost:3000`
+Skrip simulasi akan menghasilkan **Trust Score** di terminal dan menyimpan screenshot `bot-detection-result.png`.
 
-### Simulasi Bot End-to-End
+## Data  Machine Learning Workflow
 
-Untuk menguji integrasi behavior guard pada seluruh alur pemesanan hingga verifikasi pembayaran, jalankan skrip simulasi berikut setelah aplikasi web Laravel berjalan di `http://localhost:8000`:
+1. Jalankan bot/penugasan manusia → data gerakan mouse & keyboard terekam.
+2. Dataset tersimpan (`training-data-bot.json`, `training-data-human.json`).
+3. `train-model.js` menormalisasi fitur (kecepatan, jitter, ritme ketikan).
+4. Model TensorFlow.js dihasilkan (`model.json`) beserta statistik normalisasi (`normalization-stats.json`).
+5. Model dapat di-*load* di sisi server maupun frontend untuk scoring real-time.
 
-```bash
-npm run simulate:bot
-```
+## Roadmap Singkat
 
-Skrip ini akan membuka peramban headless menggunakan Puppeteer, meniru pola interaksi bot dari halaman pencarian hingga modal trust score di halaman pembayaran, dan menyimpan tangkapan layar hasil verifikasi pada `bot-detection-result.png`.
-
-## Demo
-
-Demo aplikasi ini menampilkan simulasi pembelian tiket kereta api dengan sistem anti-bot KAI Guard. Pengguna dapat mengisi form pembelian tiket dan sistem akan menganalisis perilaku pengguna secara real-time untuk menentukan apakah pengguna adalah manusia atau bot.
+- Integrasi API jadwal real-time dan harga dinamis.
+- Algoritma optimasi multi-leg (RAPTOR/A* berbobot).
+- PWA mode untuk akses offline dan notifikasi keberangkatan.
+- Dynamic challenge yang hanya aktif untuk sesi borderline.
+- Dashboard monitoring untuk tim operasional (heatmap serangan, trust score historis).
 
 ## Kontribusi
 
-Kontribusi untuk proyek ini sangat diterima. Silakan fork repositori ini dan buat pull request untuk mengusulkan perubahan.
-
-## Lisensi
-
-Proyek ini dilisensikan di bawah lisensi MIT - lihat file LICENSE untuk detail lebih lanjut.
-
-## Tim Pengembang
-
-- Tim Hackathon KAI Guard
-
-## Kontak
-
-Untuk pertanyaan atau saran, silakan hubungi kami melalui email: example@example.com
+- Buka issue / pull request untuk ide perbaikan.
+- Sertakan deskripsi jelas, langkah reproduksi, dan bukti pengujian.
+- Pastikan ESLint/Prettier (jika tersedia) dan test relevan dijalankan sebelum commit.
