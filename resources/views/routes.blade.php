@@ -190,6 +190,11 @@
 				</section>
 			</main>
 		</div>
+	@include('components.behavior-guard-assets', [
+		'pageName' => 'routes',
+		'pageStage' => 'select-route',
+		'stageLabel' => 'Pilih rute',
+	])
 	<script src="{{ asset('js/routes.js') }}" defer></script>
 	</body>
 </html>

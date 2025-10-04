@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'behavior_guard' => [
+        'enabled' => env('BEHAVIOR_GUARD_ENABLED', true),
+        'endpoint' => env('BEHAVIOR_GUARD_ENDPOINT', 'http://localhost:3000/api/behavior/analyze'),
+        'storage_key' => env('BEHAVIOR_GUARD_STORAGE_KEY', 'kaizen:behaviorGuard'),
+    ],
+
 ];

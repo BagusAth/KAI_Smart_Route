@@ -1,0 +1,31 @@
+{
+  "name": "kai-guard",
+  "version": "1.0.0",
+  "description": "Sistem Cerdas Anti-Calo Berbasis Analisis Perilaku",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "collect:bot": "node server/scripts/collect-training-data.js",
+    "collect:human": "node server/scripts/collect-training-data-human.js",
+    "train": "node server/scripts/train-model.js",
+    "simulate:bot": "node bot-detected.js"
+  },
+  "keywords": [
+    "anti-bot",
+    "behavior-analysis",
+    "tensorflow"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "puppeteer": "^21.5.0"
+  }
+}

@@ -20,7 +20,11 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->index(['origin_station_id', 'destination_station_id']);
+            // The corrected code with a shorter, custom index name
+            $table->index(
+                ['origin_station_id', 'destination_station_id'],
+                'alt_routes_origin_dest_idx' // A much shorter name
+            );
         });
     }
 

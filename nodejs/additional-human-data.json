@@ -1,0 +1,541 @@
+[
+  {
+    "data": {
+      "typingSpeed": 42.7,
+      "typingConsistency": 0.76,
+      "mouseMovementSpeed": 145.3,
+      "mouseStraightness": 0.63,
+      "pauseDurations": [1350, 950, 2300],
+      "formCompletionTime": 16800
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 50.2,
+      "typingConsistency": 0.80,
+      "mouseMovementSpeed": 172.8,
+      "mouseStraightness": 0.59,
+      "pauseDurations": [1050, 1650, 1950],
+      "formCompletionTime": 17500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 37.5,
+      "typingConsistency": 0.72,
+      "mouseMovementSpeed": 128.4,
+      "mouseStraightness": 0.71,
+      "pauseDurations": [2250, 750, 2900],
+      "formCompletionTime": 22100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 59.8,
+      "typingConsistency": 0.84,
+      "mouseMovementSpeed": 205.6,
+      "mouseStraightness": 0.53,
+      "pauseDurations": [800, 1200, 950],
+      "formCompletionTime": 14200
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 46.3,
+      "typingConsistency": 0.77,
+      "mouseMovementSpeed": 158.9,
+      "mouseStraightness": 0.67,
+      "pauseDurations": [1500, 1800, 2100],
+      "formCompletionTime": 20300
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 53.7,
+      "typingConsistency": 0.81,
+      "mouseMovementSpeed": 188.2,
+      "mouseStraightness": 0.56,
+      "pauseDurations": [1150, 1400, 1850],
+      "formCompletionTime": 18100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 40.2,
+      "typingConsistency": 0.74,
+      "mouseMovementSpeed": 135.7,
+      "mouseStraightness": 0.69,
+      "pauseDurations": [1900, 1000, 2600],
+      "formCompletionTime": 21500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 65.3,
+      "typingConsistency": 0.87,
+      "mouseMovementSpeed": 225.1,
+      "mouseStraightness": 0.49,
+      "pauseDurations": [650, 950, 750],
+      "formCompletionTime": 12300
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 44.5,
+      "typingConsistency": 0.76,
+      "mouseMovementSpeed": 152.6,
+      "mouseStraightness": 0.66,
+      "pauseDurations": [1700, 1300, 2200],
+      "formCompletionTime": 19700
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 57.9,
+      "typingConsistency": 0.83,
+      "mouseMovementSpeed": 198.4,
+      "mouseStraightness": 0.54,
+      "pauseDurations": [900, 1250, 1050],
+      "formCompletionTime": 15600
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 39.1,
+      "typingConsistency": 0.73,
+      "mouseMovementSpeed": 132.5,
+      "mouseStraightness": 0.70,
+      "pauseDurations": [2050, 850, 2750],
+      "formCompletionTime": 23000
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 62.7,
+      "typingConsistency": 0.86,
+      "mouseMovementSpeed": 215.8,
+      "mouseStraightness": 0.50,
+      "pauseDurations": [700, 1050, 850],
+      "formCompletionTime": 13100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 47.8,
+      "typingConsistency": 0.78,
+      "mouseMovementSpeed": 162.3,
+      "mouseStraightness": 0.65,
+      "pauseDurations": [1450, 1750, 2050],
+      "formCompletionTime": 19200
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 54.6,
+      "typingConsistency": 0.82,
+      "mouseMovementSpeed": 192.7,
+      "mouseStraightness": 0.55,
+      "pauseDurations": [1100, 1350, 1750],
+      "formCompletionTime": 17300
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 41.9,
+      "typingConsistency": 0.75,
+      "mouseMovementSpeed": 140.2,
+      "mouseStraightness": 0.68,
+      "pauseDurations": [1850, 1100, 2450],
+      "formCompletionTime": 20800
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 63.8,
+      "typingConsistency": 0.86,
+      "mouseMovementSpeed": 220.4,
+      "mouseStraightness": 0.51,
+      "pauseDurations": [675, 975, 775],
+      "formCompletionTime": 12700
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 45.1,
+      "typingConsistency": 0.77,
+      "mouseMovementSpeed": 155.8,
+      "mouseStraightness": 0.64,
+      "pauseDurations": [1550, 1150, 2350],
+      "formCompletionTime": 18900
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 58.4,
+      "typingConsistency": 0.83,
+      "mouseMovementSpeed": 201.9,
+      "mouseStraightness": 0.53,
+      "pauseDurations": [850, 1200, 1000],
+      "formCompletionTime": 15200
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 38.3,
+      "typingConsistency": 0.72,
+      "mouseMovementSpeed": 129.7,
+      "mouseStraightness": 0.71,
+      "pauseDurations": [2150, 800, 2850],
+      "formCompletionTime": 23500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 61.5,
+      "typingConsistency": 0.85,
+      "mouseMovementSpeed": 212.3,
+      "mouseStraightness": 0.52,
+      "pauseDurations": [725, 1075, 875],
+      "formCompletionTime": 13500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 49.2,
+      "typingConsistency": 0.79,
+      "mouseMovementSpeed": 168.5,
+      "mouseStraightness": 0.62,
+      "pauseDurations": [1400, 1700, 2000],
+      "formCompletionTime": 18500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 56.1,
+      "typingConsistency": 0.82,
+      "mouseMovementSpeed": 196.8,
+      "mouseStraightness": 0.54,
+      "pauseDurations": [950, 1300, 1150],
+      "formCompletionTime": 16100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 43.4,
+      "typingConsistency": 0.76,
+      "mouseMovementSpeed": 147.9,
+      "mouseStraightness": 0.67,
+      "pauseDurations": [1750, 1050, 2550],
+      "formCompletionTime": 20100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 64.9,
+      "typingConsistency": 0.87,
+      "mouseMovementSpeed": 223.6,
+      "mouseStraightness": 0.50,
+      "pauseDurations": [625, 925, 725],
+      "formCompletionTime": 12000
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 46.7,
+      "typingConsistency": 0.78,
+      "mouseMovementSpeed": 159.4,
+      "mouseStraightness": 0.63,
+      "pauseDurations": [1500, 1200, 2250],
+      "formCompletionTime": 19500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 59.2,
+      "typingConsistency": 0.84,
+      "mouseMovementSpeed": 204.1,
+      "mouseStraightness": 0.52,
+      "pauseDurations": [825, 1175, 975],
+      "formCompletionTime": 14800
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 37.8,
+      "typingConsistency": 0.71,
+      "mouseMovementSpeed": 127.2,
+      "mouseStraightness": 0.72,
+      "pauseDurations": [2200, 750, 2950],
+      "formCompletionTime": 24000
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 60.3,
+      "typingConsistency": 0.85,
+      "mouseMovementSpeed": 208.7,
+      "mouseStraightness": 0.53,
+      "pauseDurations": [750, 1100, 900],
+      "formCompletionTime": 13900
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 48.5,
+      "typingConsistency": 0.79,
+      "mouseMovementSpeed": 165.1,
+      "mouseStraightness": 0.64,
+      "pauseDurations": [1450, 1750, 2050],
+      "formCompletionTime": 18800
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 55.4,
+      "typingConsistency": 0.82,
+      "mouseMovementSpeed": 193.5,
+      "mouseStraightness": 0.55,
+      "pauseDurations": [1000, 1350, 1200],
+      "formCompletionTime": 16500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 42.1,
+      "typingConsistency": 0.75,
+      "mouseMovementSpeed": 143.6,
+      "mouseStraightness": 0.68,
+      "pauseDurations": [1800, 1000, 2650],
+      "formCompletionTime": 20600
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 66.2,
+      "typingConsistency": 0.88,
+      "mouseMovementSpeed": 228.9,
+      "mouseStraightness": 0.49,
+      "pauseDurations": [600, 900, 700],
+      "formCompletionTime": 11800
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 47.3,
+      "typingConsistency": 0.78,
+      "mouseMovementSpeed": 161.7,
+      "mouseStraightness": 0.62,
+      "pauseDurations": [1550, 1250, 2150],
+      "formCompletionTime": 19100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 57.6,
+      "typingConsistency": 0.83,
+      "mouseMovementSpeed": 199.2,
+      "mouseStraightness": 0.54,
+      "pauseDurations": [875, 1225, 1025],
+      "formCompletionTime": 15400
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 39.5,
+      "typingConsistency": 0.73,
+      "mouseMovementSpeed": 134.8,
+      "mouseStraightness": 0.70,
+      "pauseDurations": [2000, 850, 2700],
+      "formCompletionTime": 22700
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 62.1,
+      "typingConsistency": 0.86,
+      "mouseMovementSpeed": 214.5,
+      "mouseStraightness": 0.51,
+      "pauseDurations": [675, 1025, 825],
+      "formCompletionTime": 13300
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 50.8,
+      "typingConsistency": 0.80,
+      "mouseMovementSpeed": 175.3,
+      "mouseStraightness": 0.60,
+      "pauseDurations": [1250, 1600, 1850],
+      "formCompletionTime": 17800
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 44.9,
+      "typingConsistency": 0.77,
+      "mouseMovementSpeed": 154.2,
+      "mouseStraightness": 0.65,
+      "pauseDurations": [1650, 1100, 2400],
+      "formCompletionTime": 19400
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 67.5,
+      "typingConsistency": 0.89,
+      "mouseMovementSpeed": 232.7,
+      "mouseStraightness": 0.48,
+      "pauseDurations": [550, 850, 650],
+      "formCompletionTime": 11500
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 51.4,
+      "typingConsistency": 0.81,
+      "mouseMovementSpeed": 178.9,
+      "mouseStraightness": 0.57,
+      "pauseDurations": [1200, 1550, 1800],
+      "formCompletionTime": 17100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 40.8,
+      "typingConsistency": 0.74,
+      "mouseMovementSpeed": 138.6,
+      "mouseStraightness": 0.69,
+      "pauseDurations": [1950, 900, 2550],
+      "formCompletionTime": 21200
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 63.2,
+      "typingConsistency": 0.86,
+      "mouseMovementSpeed": 218.1,
+      "mouseStraightness": 0.50,
+      "pauseDurations": [650, 1000, 800],
+      "formCompletionTime": 12900
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 49.7,
+      "typingConsistency": 0.80,
+      "mouseMovementSpeed": 170.4,
+      "mouseStraightness": 0.61,
+      "pauseDurations": [1350, 1650, 1950],
+      "formCompletionTime": 18300
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 56.8,
+      "typingConsistency": 0.83,
+      "mouseMovementSpeed": 197.5,
+      "mouseStraightness": 0.54,
+      "pauseDurations": [925, 1275, 1075],
+      "formCompletionTime": 15900
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 43.0,
+      "typingConsistency": 0.76,
+      "mouseMovementSpeed": 146.3,
+      "mouseStraightness": 0.67,
+      "pauseDurations": [1700, 1000, 2500],
+      "formCompletionTime": 20400
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 65.7,
+      "typingConsistency": 0.87,
+      "mouseMovementSpeed": 226.8,
+      "mouseStraightness": 0.49,
+      "pauseDurations": [600, 900, 700],
+      "formCompletionTime": 12100
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 48.1,
+      "typingConsistency": 0.79,
+      "mouseMovementSpeed": 164.2,
+      "mouseStraightness": 0.63,
+      "pauseDurations": [1500, 1200, 2200],
+      "formCompletionTime": 19000
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 58.9,
+      "typingConsistency": 0.84,
+      "mouseMovementSpeed": 203.4,
+      "mouseStraightness": 0.52,
+      "pauseDurations": [850, 1200, 1000],
+      "formCompletionTime": 15000
+    },
+    "label": 1
+  },
+  {
+    "data": {
+      "typingSpeed": 38.6,
+      "typingConsistency": 0.72,
+      "mouseMovementSpeed": 131.5,
+      "mouseStraightness": 0.71,
+      "pauseDurations": [2100, 800, 2800],
+      "formCompletionTime": 22900
+    },
+    "label": 1
+  }
+]

@@ -163,6 +163,11 @@
 			'seatClass' => $seatClass,
 		])
 
+		@include('components.behavior-guard-assets', [
+			'pageName' => 'reservasi-konfirmasi',
+			'pageStage' => 'seat-selection',
+			'stageLabel' => 'Konfirmasi & pilih kursi',
+		])
 		<script src="{{ asset('js/reservasi-konfirmasi.js') }}" defer></script>
 	</body>
 </html>
