@@ -100,6 +100,48 @@
 			</main>
 		</div>
 
+		<div class="payment-verification-modal hidden" role="dialog" aria-modal="true" data-trust-modal>
+			<div class="payment-verification-backdrop" data-trust-close></div>
+			<div class="payment-verification-dialog">
+				<header class="payment-verification-header">
+					<div>
+						<p class="payment-verification-label">Verifikasi Keamanan</p>
+						<h2 class="payment-verification-title">Penilaian Trust Score</h2>
+					</div>
+					<button type="button" class="payment-verification-close" data-trust-close aria-label="Tutup verifikasi">
+						<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</header>
+				<div class="payment-verification-body">
+					<div class="payment-trust-score" data-trust-score>--%</div>
+					<p class="payment-trust-status" data-trust-status>Menunggu evaluasi perilaku pengguna...</p>
+					<p class="payment-trust-message" data-trust-message></p>
+					<dl class="payment-trust-details">
+						<div>
+							<dt>Sesi</dt>
+							<dd data-trust-session>—</dd>
+						</div>
+						<div>
+							<dt>Tindakan Sistem</dt>
+							<dd data-trust-action>—</dd>
+						</div>
+					</dl>
+				</div>
+				<footer class="payment-verification-footer">
+					<button type="button" class="payment-verification-secondary" data-trust-close>Batalkan</button>
+					<button type="button" class="payment-verification-primary" data-trust-continue disabled>Siap Bayar</button>
+				</footer>
+			</div>
+		</div>
+
+		@include('components.behavior-guard-assets', [
+			'pageName' => 'pembayaran',
+			'pageStage' => 'payment',
+			'stageLabel' => 'Verifikasi & pembayaran',
+		])
+
 		<script src="{{ asset('js/pembayaran.js') }}" defer></script>
 	</body>
 </html>

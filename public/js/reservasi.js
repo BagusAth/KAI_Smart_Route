@@ -1,6 +1,20 @@
 (function () {
 	const form = document.querySelector('[data-reservation-form]');
 	const selectionStorageKey = 'kaizen:selectedRoute';
+	const passengerCount = document.querySelectorAll('[data-passenger-card]').length;
+	const guard = window.BehaviorGuard;
+	if (guard && typeof guard.stageReady === 'function') {
+		guard.stageReady('reservation-form', {
+			page: 'reservasi',
+			description: 'Pengisian data penumpang',
+		});
+	}
+
+	const logEvent = (name, data = {}) => {
+		if (guard && typeof guard.log === 'function') {
+			guard.log(name, data);
+		}
+	};
 
 	let selectionPayloadInput = null;
 	if (form) {
@@ -198,6 +212,9 @@
 	};
 
 	loadSelectionFromStorage();
+	logEvent('reservation_selection_loaded', {
+		hasSelection: Boolean(selectionPayloadInput?.value),
+	});
 
 	if (!selectionPayloadInput) {
 		setSelectionPayload(null);
@@ -327,10 +344,18 @@
 		input.addEventListener('input', () => {
 			validateField(fieldKey);
 			resetAlert();
+			logEvent('reservation_field_input', {
+				field: fieldKey,
+				valueLength: input.value?.length || 0,
+			});
 		});
 
 		input.addEventListener('blur', () => {
 			validateField(fieldKey);
+			logEvent('reservation_field_blur', {
+				field: fieldKey,
+				valid: !getFieldElements(fieldKey).wrapper?.classList.contains('is-invalid'),
+			});
 		});
 	});
 
@@ -340,6 +365,7 @@
 		if (!isValid) {
 			event.preventDefault();
 			resetAlert();
+			logEvent('reservation_validation_failed', {});
 
 			if (submitButton) {
 				submitButton.disabled = false;
@@ -348,6 +374,21 @@
 			}
 
 			return;
+		}
+
+		logEvent('reservation_validation_passed', {
+			passengerCount: fieldInputs.length > 0 ? passengerCount : 0,
+		});
+
+		if (guard && typeof guard.flush === 'function') {
+			guard
+				.flush('reservation-submitted', {
+					keepAlive: true,
+					context: {
+						passengerCount,
+					},
+				})
+				.catch(() => undefined);
 		}
 
 		if (submitButton) {

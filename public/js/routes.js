@@ -1,6 +1,20 @@
 (function () {
 	const dateButtons = Array.from(document.querySelectorAll('[data-date-option]'));
 
+	const guard = window.BehaviorGuard;
+	if (guard && typeof guard.stageReady === 'function') {
+		guard.stageReady('select-route', {
+			page: 'routes',
+			description: 'Pilih rekomendasi rute',
+		});
+	}
+
+	const logEvent = (name, data = {}) => {
+		if (guard && typeof guard.log === 'function') {
+			guard.log(name, data);
+		}
+	};
+
 	if (dateButtons.length > 0) {
 		const setActiveButton = (button) => {
 			dateButtons.forEach((item) => {
@@ -19,6 +33,8 @@
 				date: button.dataset.dateValue || '',
 				day: button.dataset.dateDay || '',
 			};
+
+			logEvent('routes_date_change', detail);
 
 			document.dispatchEvent(new CustomEvent('routes:date-change', { detail }));
 		};
@@ -260,6 +276,10 @@
 		});
 
 		updateEmptyState();
+		logEvent('routes_filter_applied', {
+			start: startSelect?.value || null,
+			end: endSelect?.value || null,
+		});
 
 		if (shouldClose) {
 			closeDropdown();
@@ -368,6 +388,8 @@
 		if (modeToggleButton) {
 			modeToggleButton.textContent = getToggleLabelForState(mode);
 		}
+
+		logEvent('routes_mode_toggle', { mode });
 	};
 
 	if (modeToggleButton) {
@@ -493,6 +515,24 @@
 			}
 
 			document.dispatchEvent(new CustomEvent('routes:select', { detail: { card, payload } }));
+
+			logEvent('route_selected', {
+				cardType: payload.type || card.dataset.routeType || null,
+				train: payload.train_code || payload.train_name || null,
+				price: payload.price || null,
+				passengers: payload.passenger_count || null,
+			});
+
+			if (guard && typeof guard.flush === 'function') {
+				guard
+					.flush('route-selected', {
+						keepAlive: true,
+						context: {
+							route: payload,
+						},
+					})
+					.catch(() => undefined);
+			}
 
 			if (!reservationUrl) {
 				return;

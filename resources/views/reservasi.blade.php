@@ -235,6 +235,11 @@
 			</main>
 		</div>
 
+		@include('components.behavior-guard-assets', [
+			'pageName' => 'reservasi',
+			'pageStage' => 'reservation-form',
+			'stageLabel' => 'Isi data penumpang',
+		])
 		<script src="{{ asset('js/reservasi.js') }}" defer></script>
 	</body>
 </html>

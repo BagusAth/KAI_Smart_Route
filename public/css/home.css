@@ -64,6 +64,64 @@ body.home-page-body {
 	transform: translateY(-2px);
 }
 
+.station-suggestions {
+	position: absolute;
+	top: calc(100% + 0.5rem);
+	left: 0;
+	right: 0;
+	background-color: #ffffff;
+	border-radius: 20px;
+	border: 1px solid rgba(79, 70, 229, 0.18);
+	box-shadow: 0 18px 46px rgba(79, 70, 229, 0.18);
+	padding: 0.5rem 0;
+	max-height: 18rem;
+	overflow-y: auto;
+	z-index: 40;
+}
+
+.station-suggestion-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	border: 0;
+	background: transparent;
+	padding: 0.75rem 1rem;
+	font-size: 0.875rem;
+	color: #1e293b;
+	text-align: left;
+	gap: 0.75rem;
+	cursor: pointer;
+}
+
+.station-suggestion-item:hover,
+.station-suggestion-item:focus {
+	background: rgba(79, 70, 229, 0.08);
+	outline: none;
+}
+
+.station-suggestion-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}
+
+.station-suggestion-title {
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.station-suggestion-code {
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: #4f46e5;
+}
+
+.station-suggestion-city {
+	font-size: 0.75rem;
+	color: #64748b;
+}
+
 .home-popular-section {
 	position: relative;
 	z-index: 10;

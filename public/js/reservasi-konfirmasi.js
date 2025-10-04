@@ -1,5 +1,18 @@
 (function () {
 	const bodyElement = document.body;
+	const guard = window.BehaviorGuard;
+	if (guard && typeof guard.stageReady === 'function') {
+		guard.stageReady('seat-selection', {
+			page: 'reservasi-konfirmasi',
+			description: 'Konfirmasi data & pilih kursi',
+		});
+	}
+
+	const logEvent = (name, data = {}) => {
+		if (guard && typeof guard.log === 'function') {
+			guard.log(name, data);
+		}
+	};
 
 	const safeParse = (value, fallback) => {
 		if (!value) {
@@ -376,6 +389,12 @@
 		const seatInput = seatInputsSeat.get(passengerIndex);
 		if (coachInput) coachInput.value = normalizedCoach;
 		if (seatInput) seatInput.value = normalizedSeat;
+
+		logEvent('seat_selected', {
+			passengerIndex,
+			coach: normalizedCoach,
+			seat: normalizedSeat,
+		});
 	};
 
 	const clearSeat = (passengerIndex) => {
@@ -395,6 +414,8 @@
 		const seatInput = seatInputsSeat.get(passengerIndex);
 		if (coachInput) coachInput.value = '';
 		if (seatInput) seatInput.value = '';
+
+		logEvent('seat_cleared', { passengerIndex });
 	};
 
 	const setActivePassenger = (index) => {
@@ -505,6 +526,10 @@
 		if (seatError) {
 			seatError.hidden = true;
 		}
+		logEvent('seat_modal_opened', {
+			selected: Array.from(selectedSeats.values()).filter((seat) => seat && seat.coach && seat.seat).length,
+			passengerCount,
+		});
 	};
 
 	const closeModal = () => {
@@ -512,6 +537,7 @@
 		if (bodyElement) {
 			bodyElement.style.overflow = '';
 		}
+		logEvent('seat_modal_closed', {});
 	};
 
 	if (openSeatButton) {
@@ -543,11 +569,44 @@
 					seatError.hidden = false;
 					seatError.textContent = 'Silakan pilih kursi untuk setiap penumpang sebelum melanjutkan.';
 				}
+				logEvent('seat_submission_blocked', { selectedCount, passengerCount });
 				return;
 			}
 
 			if (seatError) {
 				seatError.hidden = true;
+			}
+
+			logEvent('seat_submission_success', { selectedCount, passengerCount });
+			if (guard && typeof guard.flush === 'function') {
+				guard
+					.flush('seat-selection-saved', {
+						keepAlive: true,
+						context: {
+							selectedCount,
+							passengerCount,
+						},
+					})
+					.catch(() => undefined);
+			}
+		});
+	}
+
+	if (paymentButton) {
+		paymentButton.addEventListener('click', () => {
+			const selectedCount = Array.from(selectedSeats.values()).filter((seat) => seat && seat.coach && seat.seat).length;
+			const ready = !paymentButton.classList.contains('is-disabled');
+			logEvent('seat_proceed_to_payment', { selectedCount, passengerCount, ready });
+			if (ready && guard && typeof guard.flush === 'function') {
+				guard
+					.flush('seat-stage-complete', {
+						keepAlive: true,
+						context: {
+							selectedCount,
+							passengerCount,
+						},
+					})
+					.catch(() => undefined);
 			}
 		});
 	}

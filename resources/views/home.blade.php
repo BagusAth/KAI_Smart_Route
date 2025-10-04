@@ -82,6 +82,7 @@
 												<option value="{{ $station['label'] }}" data-code="{{ $station['code'] }}">{{ $station['code'] }} &middot; {{ $station['city'] }}</option>
 											@endforeach
 										</datalist>
+										<div class="station-suggestions hidden" data-suggestions="origin"></div>
 										<span class="pointer-events-none absolute inset-y-0 right-4 hidden items-center text-indigo-500 peer-focus:flex">
 											<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
@@ -110,6 +111,7 @@
 												<option value="{{ $station['label'] }}" data-code="{{ $station['code'] }}">{{ $station['code'] }} &middot; {{ $station['city'] }}</option>
 											@endforeach
 										</datalist>
+										<div class="station-suggestions hidden" data-suggestions="destination"></div>
 										<span class="pointer-events-none absolute inset-y-0 right-4 hidden items-center text-indigo-500 peer-focus:flex">
 											<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
@@ -361,6 +363,11 @@
 			</div>
 		</div>
 
+		@include('components.behavior-guard-assets', [
+			'pageName' => 'home',
+			'pageStage' => 'search',
+			'stageLabel' => 'Form pencarian',
+		])
 		<script src="{{ asset('js/home.js') }}" defer></script>
 	</body>
 </html>
